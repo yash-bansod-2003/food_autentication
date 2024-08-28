@@ -6,6 +6,7 @@
     "dev": "tsup src/index.ts --watch --onSuccess 'node dist/index.js'",
     "build": "tsup",
     "lint": "npx eslint ./src",
+    "format": "npx prettier ./src --write",
     "prepare": "husky"
   },
   "keywords": [],
@@ -18,6 +19,7 @@
     "eslint": "^9.9.1",
     "husky": "^9.1.5",
     "lint-staged": "^15.2.9",
+    "prettier": "3.3.3",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.3.0"
