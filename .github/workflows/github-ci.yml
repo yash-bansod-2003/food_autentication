@@ -28,13 +28,10 @@ jobs:
         run: npm run lint
 
       - name: Run Prettier for Code Formatting
-        run: npm run prettier:check
+        run: npm run format
 
-      - name: Run Unit Tests
+      - name: Run Unit Tests And Collect Test Coverage (using Jest)
         run: npm test
-
-      - name: Collect Test Coverage (using Jest)
-        run: npm run coverage
 
       - name: Upload Coverage to Coveralls
         uses: coverallsapp/github-action@v2
