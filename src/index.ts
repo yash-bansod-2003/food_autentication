@@ -1,8 +1,10 @@
 import { type Express } from "express";
 import { createServer } from "@/server";
+import { config } from "dotenv";
+config({ path: `.env.${process.env.NODE_ENV}` });
 
-const host = "localhost";
-const port = 3000;
+const port = parseInt(process.env.port!) ?? 5000;
+const host = process.env.host ?? "localhost";
 
 const server: Express = createServer();
 
