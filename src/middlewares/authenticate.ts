@@ -2,8 +2,15 @@ import fs from "node:fs";
 import { Request, Response, NextFunction } from "express";
 import TokensService from "@/services/tokens.service";
 import createHttpError from "http-errors";
+import logger from "@/config/logger";
 
-const privateKey = fs.readFileSync("certificates/private.pem");
+let privateKey: Buffer | string;
+try {
+  privateKey = fs.readFileSync("certificates/private.pem");
+} catch (error) {
+  privateKey = "";
+  logger.error(error);
+}
 const accessTokensService = new TokensService(privateKey, {
   algorithm: "RS256",
   expiresIn: "1h",
