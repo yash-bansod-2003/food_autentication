@@ -14,7 +14,14 @@ import configuration from "@/config/configuration";
 const router = Router();
 
 const usersRepository = AppDataSource.getRepository(User);
-const privateKey = fs.readFileSync("certificates/private.pem");
+let privateKey: Buffer | string;
+try {
+  privateKey = fs.readFileSync("certificates/private.pem");
+} catch (error) {
+  privateKey = "";
+  logger.error(error);
+}
+
 const accessTokensService = new TokensService(privateKey, {
   algorithm: "RS256",
   expiresIn: "1h",
