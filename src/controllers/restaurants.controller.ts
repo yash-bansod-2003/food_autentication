@@ -5,8 +5,8 @@ import { Logger } from "winston";
 
 class RestaurantsController {
   constructor(
-    private restaurantsService: RestaurantsService,
-    private logger: Logger,
+    private readonly restaurantsService: RestaurantsService,
+    private readonly logger: Logger,
   ) {}
 
   async create(req: Request, res: Response) {
@@ -23,14 +23,14 @@ class RestaurantsController {
 
   async findOne(req: Request, res: Response) {
     const restaurants = await this.restaurantsService.findOne({
-      id: req.params.id,
+      where: { id: Number(req.params.id) },
     });
     res.json(restaurants);
   }
 
   async update(req: Request, res: Response) {
     const restaurant = await this.restaurantsService.update(
-      { id: req.params.id },
+      { id: Number(req.params.id) },
       req.body as UpdateRestaurantDto,
     );
     res.json(restaurant);
@@ -38,7 +38,7 @@ class RestaurantsController {
 
   async delete(req: Request, res: Response) {
     const restaurant = await this.restaurantsService.delete({
-      id: req.params.id,
+      id: Number(req.params.id),
     });
     return res.json(restaurant);
   }

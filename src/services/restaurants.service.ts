@@ -1,30 +1,42 @@
 import { Restaurant } from "@/entity/Restaurant";
-import { DeepPartial, DeleteResult, Repository, UpdateResult } from "typeorm";
+import {
+  DeepPartial,
+  DeleteResult,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+  SaveOptions,
+  UpdateResult,
+} from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 class UserService {
-  constructor(private restaurantsRepository: Repository<Restaurant>) {}
-  async create(createRestaurantDto: DeepPartial<Restaurant>) {
-    return await this.restaurantsRepository.save(createRestaurantDto);
+  constructor(private readonly restaurantsRepository: Repository<Restaurant>) {}
+  async create(
+    createRestaurantDto: DeepPartial<Restaurant>,
+    options?: SaveOptions,
+  ) {
+    return await this.restaurantsRepository.save(createRestaurantDto, options);
   }
 
-  findAll(): Promise<Restaurant[]> {
-    return this.restaurantsRepository.find({ relations: { users: true } });
+  findAll(options?: FindManyOptions<Restaurant>): Promise<Restaurant[]> {
+    return this.restaurantsRepository.find(options);
   }
 
-  findOne(expression: Record<string, string>): Promise<Restaurant | null> {
-    return this.restaurantsRepository.findOneBy(expression);
+  findOne(options: FindOneOptions<Restaurant>): Promise<Restaurant | null> {
+    return this.restaurantsRepository.findOne(options);
   }
 
   update(
-    expression: Record<string, string>,
+    criteria: FindOptionsWhere<Restaurant>,
     updateRestaurantDto: QueryDeepPartialEntity<Restaurant>,
   ): Promise<UpdateResult> {
-    return this.restaurantsRepository.update(expression, updateRestaurantDto);
+    return this.restaurantsRepository.update(criteria, updateRestaurantDto);
   }
 
-  delete(expression: Record<string, string>): Promise<DeleteResult> {
-    return this.restaurantsRepository.delete(expression);
+  delete(criteria: FindOptionsWhere<Restaurant>): Promise<DeleteResult> {
+    return this.restaurantsRepository.delete(criteria);
   }
 }
 
