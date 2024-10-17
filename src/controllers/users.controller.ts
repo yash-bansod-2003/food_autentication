@@ -14,7 +14,7 @@ class UsersController {
   async create(req: Request, res: Response) {
     const { restaurantId, ...rest } = req.body as CreateUserDto;
     const restaurant = await this.restaurantsService.findOne({
-      id: restaurantId as unknown as string,
+      where: { id: restaurantId },
     });
 
     if (!restaurant) {
@@ -45,7 +45,7 @@ class UsersController {
   async update(req: Request, res: Response) {
     const { restaurantId, ...rest } = req.body as UpdateUserDto;
     const restaurant = await this.restaurantsService.findOne({
-      id: restaurantId as unknown as string,
+      where: { id: restaurantId },
     });
     const user = await this.userService.update(
       {
