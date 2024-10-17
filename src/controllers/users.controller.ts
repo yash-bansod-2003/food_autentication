@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import UserService from "@/services/user.service";
+import UserService from "@/services/users.service";
 import RestaurantsService from "@/services/restaurants.service";
 import { CreateUserDto, UpdateUserDto } from "@/dto/users";
 import { Logger } from "winston";
 
 class UsersController {
   constructor(
-    private userService: UserService,
-    private restaurantsService: RestaurantsService,
-    private logger: Logger,
+    private readonly userService: UserService,
+    private readonly restaurantsService: RestaurantsService,
+    private readonly logger: Logger,
   ) {}
 
   async create(req: Request, res: Response) {
@@ -36,7 +36,9 @@ class UsersController {
   }
 
   async findOne(req: Request, res: Response) {
-    const user = await this.userService.findOne({ id: req.params.id });
+    const user = await this.userService.findOne({
+      where: { id: Number(req.params.id) },
+    });
     res.json(user);
   }
 
@@ -46,7 +48,9 @@ class UsersController {
       id: restaurantId as unknown as string,
     });
     const user = await this.userService.update(
-      { id: req.params.id },
+      {
+        id: Number(req.params.id),
+      },
       {
         ...rest,
         restaurant: restaurant as never,
@@ -56,7 +60,7 @@ class UsersController {
   }
 
   async delete(req: Request, res: Response) {
-    const user = await this.userService.delete({ id: req.params.id });
+    const user = await this.userService.delete({ id: Number(req.params.id) });
     return res.json(user);
   }
 }

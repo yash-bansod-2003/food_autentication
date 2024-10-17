@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import JsonWebToken from "jsonwebtoken";
-import UserService from "@/services/user.service";
+import UserService from "@/services/users.service";
 import TokensService from "@/services/tokens.service";
 import { CreateUserDto } from "@/dto/users";
 import { ForgotPasswordDto, ResetPasswordDto } from "@/dto/autentication";

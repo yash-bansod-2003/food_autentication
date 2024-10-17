@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Router } from "express";
 import UsersController from "@/controllers/users.controller";
-import UsersService from "@/services/user.service";
+import UsersService from "@/services/users.service";
 import RestaurantsService from "@/services/restaurants.service";
 import { AppDataSource } from "@/data-source";
 import { User } from "@/entity/User";
