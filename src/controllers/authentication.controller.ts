@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import JsonWebToken from "jsonwebtoken";
 import UserService from "@/services/user.service";
-import {
-  AccessTokensService,
-  ForgotTokensService,
-} from "@/services/tokens.service";
+import TokensService from "@/services/tokens.service";
 import { CreateUserDto } from "@/dto/users";
 import { ForgotPasswordDto, ResetPasswordDto } from "@/dto/autentication";
 import { AuthenticatedRequest } from "@/middlewares/authenticate";
@@ -12,10 +9,11 @@ import { Logger } from "winston";
 
 class AutenticationController {
   constructor(
-    private userService: UserService,
-    private accessTokensService: AccessTokensService,
-    private forgotTokensService: ForgotTokensService,
-    private logger: Logger,
+    private readonly userService: UserService,
+    private readonly accessTokensService: TokensService,
+    private readonly refreshTokensService: TokensService,
+    private readonly forgotTokensService: TokensService,
+    private readonly logger: Logger,
   ) {}
 
   async register(req: Request, res: Response) {
@@ -56,7 +54,7 @@ class AutenticationController {
       role: user.role,
     };
 
-    const accessToken = this.accessTokensService.generate(payload);
+    const accessToken = this.accessTokensService.sign(payload);
 
     return res.json({ accessToken });
   }
@@ -80,7 +78,7 @@ class AutenticationController {
       role: user.role,
       email: user.email,
     };
-    const token = this.forgotTokensService.generate(payload);
+    const token = this.forgotTokensService.sign(payload);
 
     return res.json({ token });
   }

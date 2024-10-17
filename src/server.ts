@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import express, { Express } from "express";
-import usersRouter from "@/routes/user.router";
-import authRouter from "@/routes/auth.router";
+import usersRouter from "@/routes/users.router";
+import authRouter from "@/routes/authentication.router";
 import restaurantsRouter from "@/routes/restaurants.router";
 
 export const createServer = (): Express => {

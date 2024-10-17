@@ -13,6 +13,10 @@ const configuration = {
     database: process.env.DATABASE,
   },
   jwks_uri: process.env.JWKS_URI,
+  jwt_secrets: {
+    refresh: process.env.JWT_SECRETS_REFRESH,
+    forgot: process.env.JWT_SECRETS_FORGOT,
+  },
 };
 
 export default configuration;
