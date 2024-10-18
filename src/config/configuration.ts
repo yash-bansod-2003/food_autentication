@@ -2,6 +2,7 @@ import { config } from "dotenv";
 config({ path: `.env.${process.env.NODE_ENV}` });
 
 const configuration = {
+  node_env: process.env.NODE_ENV,
   host: process.env.HOST,
   port: process.env.PORT,
   database: {
@@ -12,6 +13,13 @@ const configuration = {
     database: process.env.DATABASE,
   },
   jwks_uri: process.env.JWKS_URI,
+  jwt_secrets: {
+    refresh: process.env.JWT_SECRETS_REFRESH,
+    forgot: process.env.JWT_SECRETS_FORGOT,
+  },
+  cookies: {
+    domain: process.env.COOKIE_DOMAIN,
+  },
 };
 
 export default configuration;

@@ -1,48 +1,24 @@
 import JsonWebToken from "jsonwebtoken";
-import fs from "node:fs";
-import JwksRsa from "jwks-rsa";
-import configuration from "@/config/configuration";
 
-abstract class TokensService {
-  abstract generate(payload: JsonWebToken.JwtPayload): string;
-  abstract verify(token: string): JsonWebToken.JwtPayload | string;
-}
-
-class AccessTokensService extends TokensService {
-  generate(payload: JsonWebToken.JwtPayload): string {
-    const privateKey = fs.readFileSync("certs/private.pem");
-    if (!privateKey) {
-      throw new Error("private key not found");
-    }
-    const accessToken = JsonWebToken.sign(payload, privateKey, {
-      algorithm: "RS256",
-      expiresIn: "1h",
-      issuer: "food_authentication",
-    });
-    return accessToken;
+class TokensService {
+  private readonly secret: JsonWebToken.Secret;
+  private readonly signOptions?: JsonWebToken.SignOptions;
+  constructor(
+    secret: JsonWebToken.Secret,
+    signOptions?: JsonWebToken.SignOptions,
+  ) {
+    this.secret = secret;
+    this.signOptions = signOptions;
   }
 
-  async verify(token: string): Promise<JsonWebToken.JwtPayload | string> {
-    const client = JwksRsa({
-      jwksUri: configuration.jwks_uri!,
-      cache: true,
-      rateLimit: true,
-    });
-    const key = await client.getSigningKey();
-    const signingKey = key.getPublicKey();
-    return JsonWebToken.verify(token, signingKey);
-  }
-}
-
-class RefreshTokensService extends TokensService {
-  generate(payload: JsonWebToken.JwtPayload): string {
-    const accessToken = JsonWebToken.sign(payload, "secret");
-    return accessToken;
+  sign(payload: JsonWebToken.JwtPayload): string {
+    const token = JsonWebToken.sign(payload, this.secret, this.signOptions);
+    return token;
   }
 
   verify(token: string): JsonWebToken.JwtPayload | string {
-    return JsonWebToken.verify(token, "secret");
+    return JsonWebToken.verify(token, this.secret);
   }
 }
 
-export { AccessTokensService, RefreshTokensService };
+export default TokensService;

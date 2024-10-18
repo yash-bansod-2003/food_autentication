@@ -1,26 +1,35 @@
-import { Request, Response, NextFunction } from "express";
-import { AccessTokensService } from "@/services/tokens.service";
-const accessTokensService = new AccessTokensService();
-const authenticate = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const authenticationHeader = req.headers.authorization;
-  const authenticationToken = authenticationHeader?.split(" ")[1];
-  if (!authenticationToken) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  const match = await accessTokensService.verify(authenticationToken);
-  if (!match) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  req["user"] = match;
-  next();
-};
+import { Request } from "express";
+import jwksClient from "jwks-rsa";
+import { expressjwt, GetVerificationKey } from "express-jwt";
+import configuration from "@/config/configuration";
+
+export default expressjwt({
+  secret: jwksClient.expressJwtSecret({
+    jwksUri: configuration.jwks_uri!,
+    cache: true,
+    rateLimit: true,
+  }) as GetVerificationKey,
+  algorithms: ["RS256"],
+  getToken(req: Request) {
+    const authorizationHeader = req.headers.authorization;
+
+    if (authorizationHeader && !!authorizationHeader?.split(" ")?.[1]) {
+      const token = authorizationHeader.split(" ")[1];
+      if (token) {
+        return token;
+      }
+    }
+
+    const { accessToken: token } = req.cookies as Record<
+      string,
+      string | undefined
+    >;
+    return token;
+  },
+});
 
 export interface AuthenticatedRequest extends Request {
-  user: {
+  auth: {
     sub: string;
     role: string;
     restaurantId: number;
@@ -28,5 +37,3 @@ export interface AuthenticatedRequest extends Request {
     exp: number;
   };
 }
-
-export default authenticate;

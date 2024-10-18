@@ -3,7 +3,7 @@ import { AuthenticatedRequest } from "@/middlewares/authenticate";
 
 const authorization = (roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const role = (req as AuthenticatedRequest).user.role;
+    const role = (req as AuthenticatedRequest).auth.role;
     if (!roles.includes(role)) {
       return res.status(403).json({ message: "forbidden" });
     }
