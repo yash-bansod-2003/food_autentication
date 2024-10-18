@@ -15,8 +15,8 @@ export const userCreateValidator = (
   });
   try {
     validationSchema.parse(req.body);
-    next();
+    return next();
   } catch (error) {
-    return res.json(error);
+    return next(error);
   }
 };
