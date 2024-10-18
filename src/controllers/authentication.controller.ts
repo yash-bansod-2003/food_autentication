@@ -64,14 +64,14 @@ class AutenticationController {
         password,
         user.password,
       );
-      if (isPasswordCorrect) {
+      if (!isPasswordCorrect) {
         this.logger.debug(`Wrong credentials for email: ${email}`);
         throw createHttpError(400, "wrong credentials");
       }
 
       const payload: JsonWebToken.JwtPayload = {
         sub: String(user.id),
-        restaurantId: user?.restaurant.id ?? null,
+        restaurantId: user?.restaurant?.id ?? null,
         role: user.role,
       };
 
@@ -83,7 +83,7 @@ class AutenticationController {
         domain: configuration.cookies.domain,
         sameSite: "strict",
         maxAge: 1000 * 60 * 60,
-        secure: true,
+        secure: false,
       });
 
       return res.json({ id: user.id });
@@ -95,7 +95,7 @@ class AutenticationController {
 
   async profile(req: Request, res: Response, next: NextFunction) {
     try {
-      const id = (req as AuthenticatedRequest).user.sub;
+      const id = (req as AuthenticatedRequest).auth.sub;
       this.logger.debug(`Fetching profile for user id: ${id}`);
       const user = await this.userService.findOne({
         where: { id: Number(id) },
@@ -105,7 +105,7 @@ class AutenticationController {
         this.logger.debug(`Profile fetched for user id: ${id}`);
         return next(createHttpError(404, "user not found"));
       }
-      return res.json(user);
+      return res.json({ ...user, password: undefined });
     } catch (error) {
       this.logger.error(`Error fetching profile: ${(error as Error).message}`);
       next(error);

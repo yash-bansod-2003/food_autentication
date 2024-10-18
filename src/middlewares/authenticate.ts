@@ -29,7 +29,7 @@ export default expressjwt({
 });
 
 export interface AuthenticatedRequest extends Request {
-  user: {
+  auth: {
     sub: string;
     role: string;
     restaurantId: number;
