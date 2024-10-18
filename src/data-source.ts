@@ -1,7 +1,5 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { User } from "@/entity/User";
-import { Restaurant } from "@/entity/Restaurant";
 import configuration from "./config/configuration";
 
 export const AppDataSource = new DataSource({
@@ -11,9 +9,9 @@ export const AppDataSource = new DataSource({
   username: configuration.database.user,
   password: configuration.database.password,
   database: configuration.database.database,
-  synchronize: true,
+  synchronize: false,
   logging: false,
-  entities: [User, Restaurant],
-  migrations: [],
+  entities: ["src/entity/**/*.{ts,.js}"],
+  migrations: ["src/migrations/**/*{.ts,.js}"],
   subscribers: [],
 });

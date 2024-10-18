@@ -19,7 +19,7 @@ class AutenticationController {
   async register(req: Request, res: Response) {
     const { email, ...rest } = req.body as CreateUserDto;
     this.logger.debug(`initiate registering user ${email}`);
-    const userExists = await this.userService.findOne({ email });
+    const userExists = await this.userService.findOne({ where: { email } });
     if (userExists) {
       this.logger.debug(`user already exists with ${email} email`);
       return res.json({ message: "user already exists" });
@@ -33,7 +33,7 @@ class AutenticationController {
   async login(req: Request, res: Response) {
     const { email, password } = req.body as CreateUserDto;
     const user = await this.userService.findOne({
-      email,
+      where: { email },
     });
 
     if (!user) {
@@ -60,7 +60,7 @@ class AutenticationController {
   }
   async profile(req: Request, res: Response) {
     const id = (req as AuthenticatedRequest).user.sub;
-    const user = await this.userService.findOne({ id });
+    const user = await this.userService.findOne({ where: { id: Number(id) } });
     if (!user) {
       return res.status(400).json({ message: "user not found" });
     }
@@ -69,7 +69,7 @@ class AutenticationController {
 
   async forgot(req: Request, res: Response) {
     const { email } = req.body as ForgotPasswordDto;
-    const user = await this.userService.findOne({ email });
+    const user = await this.userService.findOne({ where: { email } });
     if (!user) {
       return res.status(400).json({ message: "user not found" });
     }
@@ -92,7 +92,7 @@ class AutenticationController {
     const { email } = match as JsonWebToken.JwtPayload;
 
     const userExists = await this.userService.findOne({
-      email: email as string,
+      where: { email: email as string },
     });
 
     if (!userExists) {

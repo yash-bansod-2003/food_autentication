@@ -10,7 +10,9 @@
       "format": "npx prettier ./src --write",
       "prepare": "husky",
       "test": "jest",
-      "typeorm": "typeorm-ts-node-commonjs"
+      "typeorm": "typeorm-ts-node-commonjs",
+      "migration:generate": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:generate",
+      "migration:run": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:run"
    },
    "keywords": [],
    "author": "",
