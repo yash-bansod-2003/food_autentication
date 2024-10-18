@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import usersRouter from "@/routes/users.router";
 import authRouter from "@/routes/authentication.router";
 import restaurantsRouter from "@/routes/restaurants.router";
+import errorHandler from "@/middlewares/error-handler";
 
 export const createServer = (): Express => {
   const app = express();
@@ -24,7 +25,7 @@ export const createServer = (): Express => {
     })
     .use("/auth", authRouter)
     .use("/users", usersRouter)
-    .use("/restaurants", restaurantsRouter);
-
+    .use("/restaurants", restaurantsRouter)
+    .use(errorHandler);
   return app;
 };

@@ -66,7 +66,7 @@ const errorHandler = (
       ],
     };
   }
-  res.status(errorResponse.code).json(errorResponse);
+  return res.status(errorResponse.code).json(errorResponse);
 };
 
 export default errorHandler;
