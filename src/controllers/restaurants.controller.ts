@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import RestaurantsService from "@/services/restaurants.service";
 import { CreateRestaurantDto, UpdateRestaurantDto } from "@/dto/restaurants";
 import { Logger } from "winston";
+import createHttpError from "http-errors";
 
 class RestaurantsController {
   constructor(
@@ -20,12 +21,10 @@ class RestaurantsController {
       this.logger.info(`Restaurant created with id: ${restaurant.id}`);
       res.json(restaurant);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.logger.error(`Error creating restaurant: ${error.message}`);
-      } else {
-        this.logger.error(`Unknown error: ${error as string}`);
-      }
-      next(error);
+      this.logger.error(
+        `Error creating restaurant: ${(error as Error).message}`,
+      );
+      next(createHttpError(500, "Error creating restaurant"));
     }
   }
 
@@ -36,12 +35,10 @@ class RestaurantsController {
       this.logger.info(`Fetched ${restaurants.length} restaurants`);
       return res.json(restaurants);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.logger.error(`Error fetching all restaurants: ${error.message}`);
-      } else {
-        this.logger.error(`Unknown error: ${error as string}`);
-      }
-      next(error);
+      this.logger.error(
+        `Error fetching all restaurants: ${(error as Error).message}`,
+      );
+      next(createHttpError(500, "Error fetching all restaurants"));
     }
   }
 
@@ -58,14 +55,10 @@ class RestaurantsController {
       this.logger.info(`Fetched restaurant with id: ${restaurant.id}`);
       res.json(restaurant);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.logger.error(
-          `Error fetching restaurant with id: ${req.params.id}: ${error.message}`,
-        );
-      } else {
-        this.logger.error(`Unknown error: ${error as string}`);
-      }
-      next(error);
+      this.logger.error(
+        `Error fetching restaurant with id: ${req.params.id}: ${(error as Error).message}`,
+      );
+      next(createHttpError(404, "Restaurant not found"));
     }
   }
 
@@ -83,14 +76,10 @@ class RestaurantsController {
       this.logger.info(`Restaurant with id: ${req.params.id} updated`);
       res.json(restaurant);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.logger.error(
-          `Error updating restaurant with id: ${req.params.id}: ${error.message}`,
-        );
-      } else {
-        this.logger.error(`Unknown error: ${error as string}`);
-      }
-      next(error);
+      this.logger.error(
+        `Error updating restaurant with id: ${req.params.id}: ${(error as Error).message}`,
+      );
+      next(createHttpError(500, "Error updating restaurant"));
     }
   }
 
@@ -103,14 +92,10 @@ class RestaurantsController {
       this.logger.info(`Restaurant with id: ${req.params.id} deleted`);
       return res.json(restaurant);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.logger.error(
-          `Error deleting restaurant with id: ${req.params.id}: ${error.message}`,
-        );
-      } else {
-        this.logger.error(`Unknown error: ${error as string}`);
-      }
-      next(error);
+      this.logger.error(
+        `Error deleting restaurant with id: ${req.params.id}: ${(error as Error).message}`,
+      );
+      next(createHttpError(500, "Error deleting restaurant"));
     }
   }
 }
