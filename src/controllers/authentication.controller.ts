@@ -7,10 +7,12 @@ import { ForgotPasswordDto, ResetPasswordDto } from "@/dto/autentication";
 import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
+import HashingService from "@/services/hashing.service";
 
 class AutenticationController {
   constructor(
     private readonly userService: UserService,
+    private readonly hashingService: HashingService,
     private readonly accessTokensService: TokensService,
     private readonly refreshTokensService: TokensService,
     private readonly forgotTokensService: TokensService,
@@ -19,15 +21,23 @@ class AutenticationController {
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, ...rest } = req.body as CreateUserDto;
+      const { email, password, ...rest } = req.body as CreateUserDto;
       this.logger.debug(`initiate registering user ${email}`);
       const userExists = await this.userService.findOne({ where: { email } });
       if (userExists) {
         this.logger.debug(`user already exists with ${email} email`);
         throw createHttpError(400, "user already exists");
       }
+
+      this.logger.debug("creating hash of the password");
+      const passwordHash = await this.hashingService.hash(password);
+
       this.logger.debug("registering user");
-      const user = await this.userService.create({ email, ...rest });
+      const user = await this.userService.create({
+        email,
+        password: passwordHash,
+        ...rest,
+      });
       this.logger.debug("user registered successfully");
       res.json(user);
     } catch (error) {
@@ -48,9 +58,13 @@ class AutenticationController {
       if (!user) {
         throw createHttpError(404, "user not found");
       }
-
-      this.logger.debug(`Wrong credentials for email: ${email}`);
-      if (user.password !== password) {
+      this.logger.debug(`Matching password for email: ${email}`);
+      const isPasswordCorrect = await this.hashingService.compare(
+        password,
+        user.password,
+      );
+      if (isPasswordCorrect) {
+        this.logger.debug(`Wrong credentials for email: ${email}`);
         throw createHttpError(400, "wrong credentials");
       }
 
