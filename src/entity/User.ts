@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 import { Restaurant } from "./Restaurant";
+import { RefreshToken } from "./RefreshToken";
 
 @Entity()
 export class User {
@@ -23,4 +30,7 @@ export class User {
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.users)
   restaurant: Restaurant;
+
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshToken[];
 }
