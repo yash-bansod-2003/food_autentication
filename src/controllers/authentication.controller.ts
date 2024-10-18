@@ -8,6 +8,7 @@ import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
 import HashingService from "@/services/hashing.service";
+import configuration from "@/config/configuration";
 
 class AutenticationController {
   constructor(
@@ -77,7 +78,15 @@ class AutenticationController {
       this.logger.debug(`User with email: ${email} logged in successfully`);
       const accessToken = this.accessTokensService.sign(payload);
 
-      return res.json({ accessToken });
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        domain: configuration.cookies.domain,
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60,
+        secure: true,
+      });
+
+      return res.json({ id: user.id });
     } catch (error) {
       this.logger.error(`Error during login: ${(error as Error).message}`);
       next(error);

@@ -1,34 +1,32 @@
-import fs from "node:fs";
-import { Request, Response, NextFunction } from "express";
-import TokensService from "@/services/tokens.service";
-import createHttpError from "http-errors";
-import logger from "@/config/logger";
+import { Request } from "express";
+import jwksClient from "jwks-rsa";
+import { expressjwt, GetVerificationKey } from "express-jwt";
+import configuration from "@/config/configuration";
 
-let privateKey: Buffer | string;
-try {
-  privateKey = fs.readFileSync("certificates/private.pem");
-} catch (error) {
-  privateKey = "";
-  logger.error(error);
-}
-const accessTokensService = new TokensService(privateKey, {
-  algorithm: "RS256",
-  expiresIn: "1h",
-  issuer: "food_authentication",
+export default expressjwt({
+  secret: jwksClient.expressJwtSecret({
+    jwksUri: configuration.jwks_uri!,
+    cache: true,
+    rateLimit: true,
+  }) as GetVerificationKey,
+  algorithms: ["RS256"],
+  getToken(req: Request) {
+    const authorizationHeader = req.headers.authorization;
+
+    if (authorizationHeader && !!authorizationHeader?.split(" ")?.[1]) {
+      const token = authorizationHeader.split(" ")[1];
+      if (token) {
+        return token;
+      }
+    }
+
+    const { accessToken: token } = req.cookies as Record<
+      string,
+      string | undefined
+    >;
+    return token;
+  },
 });
-const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  const authenticationHeader = req.headers.authorization;
-  const authenticationToken = authenticationHeader?.split(" ")[1];
-  if (!authenticationToken) {
-    return next(createHttpError.Unauthorized());
-  }
-  const match = accessTokensService.verify(authenticationToken);
-  if (!match) {
-    return next(createHttpError.Unauthorized());
-  }
-  req["user"] = match;
-  next();
-};
 
 export interface AuthenticatedRequest extends Request {
   user: {
@@ -39,5 +37,3 @@ export interface AuthenticatedRequest extends Request {
     exp: number;
   };
 }
-
-export default authenticate;

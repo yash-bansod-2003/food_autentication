@@ -17,6 +17,9 @@ const configuration = {
     refresh: process.env.JWT_SECRETS_REFRESH,
     forgot: process.env.JWT_SECRETS_FORGOT,
   },
+  cookies: {
+    domain: process.env.COOKIE_DOMAIN,
+  },
 };
 
 export default configuration;
