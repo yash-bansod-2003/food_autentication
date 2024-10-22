@@ -9,9 +9,10 @@ pids
 *.seed
 *.pid.lock
 dist
+package-lock.json
+
  # coverage
 coverage/
-
 # Runtime data
 pids
 *.pid
