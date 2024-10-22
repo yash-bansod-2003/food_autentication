@@ -68,6 +68,7 @@ class AutenticationController {
         this.logger.debug(`Wrong credentials for email: ${email}`);
         throw createHttpError(400, "wrong credentials");
       }
+      this.logger.debug(`User with email: ${email} logged in successfully`);
 
       const payload: JsonWebToken.JwtPayload = {
         sub: String(user.id),
@@ -75,14 +76,37 @@ class AutenticationController {
         role: user.role,
       };
 
-      this.logger.debug(`User with email: ${email} logged in successfully`);
-      const accessToken = this.accessTokensService.sign(payload);
+      const saveRefreshToken = await this.refreshTokensService.create({ user });
+
+      if (!saveRefreshToken) {
+        return next(createHttpError(500, "internal server error"));
+      }
+      const accessToken = this.accessTokensService.sign(payload, {
+        algorithm: "RS256",
+        expiresIn: "1h",
+        issuer: "food_authentication",
+      });
+
+      const refreshToken = this.accessTokensService.sign(payload, {
+        algorithm: "HS256",
+        expiresIn: "1y",
+        issuer: "food_authentication",
+        jwtid: String(saveRefreshToken.id),
+      });
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         domain: configuration.cookies.domain,
         sameSite: "strict",
         maxAge: 1000 * 60 * 60,
+        secure: false,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        domain: configuration.cookies.domain,
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
         secure: false,
       });
 
