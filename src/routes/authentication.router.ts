@@ -25,11 +25,7 @@ try {
 
 const hashingService = new HashingService();
 
-const accessTokensService = new TokensService(privateKey, {
-  algorithm: "RS256",
-  expiresIn: "1h",
-  issuer: "food_authentication",
-});
+const accessTokensService = new TokensService(privateKey);
 const refreshTokensService = new TokensService(
   configuration.jwt_secrets.refresh!,
 );
