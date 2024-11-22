@@ -66,6 +66,7 @@ jobs:
       - name: Get changes
         id: changes
         run: |
+          git fetch --unshallow || true
           CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
           echo "Changed files: $CHANGED_FILES"
