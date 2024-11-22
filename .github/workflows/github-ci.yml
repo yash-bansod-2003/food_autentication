@@ -63,12 +63,20 @@ jobs:
       - name: Install Dependencies
         run: npm install octokit @google/generative-ai dotenv
 
+      - name: Get changes
+        id: changes
+        run: |
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+          echo "Changed files: $CHANGED_FILES"
+
       - name: Run code review
         run: node tools/review.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
 
   # deploy:
   #   name: Deploy to Docker

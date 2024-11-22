@@ -4,31 +4,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 import dotenv from "dotenv"
 
 dotenv.config();
-// Fetch the latest changes from the origin remote
-function fetchLatestChanges() {
-  execSync("git fetch origin");
-}
-
-// Get the default branch (e.g., main or master) from the repository
-function getDefaultBranch() {
-  const defaultBranch = execSync("git symbolic-ref refs/remotes/origin/HEAD")
-    .toString()
-    .split("/")[3];
-  return defaultBranch;
-}
-
-// Get the list of changed files between the current branch and the default branch
-async function getChangedFiles() {
-  fetchLatestChanges(); // Fetch the latest changes from the remote
-
-  const defaultBranch = getDefaultBranch();
-  const baseSha = execSync(`git merge-base origin/${defaultBranch} HEAD`).toString().trim();
-
-  // Get the list of changed files
-  const diffOutput = execSync(`git diff --name-only ${baseSha}`).toString();
-  return diffOutput.split("\n").filter(file => file.trim());
-}
-
 
 async function analyzeCodeWithGemini(fileContent) {
   const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -72,7 +47,8 @@ async function postReviewComment(owner, repo, comment) {
 }
 
 (async function main() {
-  const changedFiles = await getChangedFiles();
+  const changedFiles = process.env.CHANGED_FILES ? process.env.CHANGED_FILES.split("\n").filter(file => file.trim()) : [];
+
   if (changedFiles.length === 0) {
     console.log("No changed files to analyze.");
     return;
