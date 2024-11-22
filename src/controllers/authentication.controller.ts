@@ -48,7 +48,10 @@ class AutenticationController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body as CreateUserDto;
+      const { email, password } = req.body as Pick<
+        CreateUserDto,
+        "email" | "password"
+      >;
       this.logger.debug(`Attempting login for user with email: ${email}`);
       const user = await this.userService.findOne({
         where: { email },
