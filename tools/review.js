@@ -30,7 +30,7 @@ async function analyzeCodeWithGemini(fileContent) {
 
   try {
     const result = await model.generateContent(prompt);
-    const parsedResult = result.response.candidates![0].content.parts[0].text;
+    const parsedResult = result.response.candidates[0].content.parts[0].text;
     return parsedResult || "No suggestions were provided.";
   } catch (error) {
     console.error("Error using Gemini AI:", error.message);
