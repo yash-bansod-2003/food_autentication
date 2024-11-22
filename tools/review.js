@@ -1,8 +1,9 @@
-const { execSync } = require("child_process");
-const { Octokit } = require("octokit");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-require("dotenv").config();
+import { execSync } from "child_process"
+import { Octokit } from "octokit"
+import { GoogleGenerativeAI } from "@google/generative-ai"
+import dotenv from "dotenv"
 
+dotenv.config();
 async function getChangedFiles() {
   const baseSha = execSync("git merge-base origin/main HEAD").toString().trim();
   const diffOutput = execSync(`git diff --name-only ${baseSha}`).toString();
