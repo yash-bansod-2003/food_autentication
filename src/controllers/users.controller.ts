@@ -21,7 +21,8 @@ class UsersController {
 
     if (!restaurant) {
       this.logger.error(`Restaurant with id: ${restaurantId} not found`);
-      return next(createHttpError(400, "restaurant not found"));
+      next(createHttpError(400, "restaurant not found"));
+      return;
     }
 
     try {
@@ -31,9 +32,11 @@ class UsersController {
       });
       this.logger.info(`User created with id: ${user.id}`);
       res.json(user);
+      return;
     } catch (error) {
       this.logger.error(`Error creating user: ${(error as Error).message}`);
       next(createHttpError(500, "internal server error"));
+      return;
     }
   }
 
