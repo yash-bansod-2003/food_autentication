@@ -72,7 +72,7 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip setuptools wheel
-          pip install -r requirements.txt
+          pip install requests github dotenv
 
       - name: Run code review
         run: python tools/review.py
