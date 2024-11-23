@@ -1,5 +1,5 @@
 import { execSync } from "child_process"
-import { Octokit } from "octokit"
+import path from "path";
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import dotenv from "dotenv"
 
@@ -34,14 +34,14 @@ async function analyzeCodeWithGemini(fileContent) {
   }
 }
 
-async function postReviewComment(pull_number, owner, repo, comment) {
-  const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-  await octokit.request(`POST /repos/${owner}/${repo}/pulls/${pull_number}/comments`, {
-    owner: owner,
-    repo: repo,
-    pull_number: pull_number,
-    body: comment
-  })
+async function saveReport(report) {
+  try {
+    const reportPath = path.join(process.cwd(), 'report.md');
+    fs.writeFileSync(reportPath, report, 'utf8');
+    console.log(`Report saved to ${reportPath}`);
+  } catch (error) {
+    console.error("Failed to save the report:", error);
+  }
 }
 
 (async function main() {
@@ -52,10 +52,6 @@ async function postReviewComment(pull_number, owner, repo, comment) {
     return;
   }
 
-  const owner = process.env.GITHUB_REPOSITORY.split("/")[0];
-  const repo = process.env.GITHUB_REPOSITORY.split("/")[1];
-  const pr_number = process.env.PR_NUMBER;
-
   let reviewComment = "### Code Review Report\n\n";
 
   for (const file of changedFiles) {
@@ -65,5 +61,5 @@ async function postReviewComment(pull_number, owner, repo, comment) {
     reviewComment += `#### File: ${file}\n${suggestions}\n\n`;
   }
 
-  await postReviewComment(pr_number, owner, repo, reviewComment);
+  await saveReport(reviewComment);
 })();
