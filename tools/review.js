@@ -2,6 +2,7 @@ import { execSync } from "child_process"
 import path from "path";
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import dotenv from "dotenv"
+import fs from "fs";
 
 dotenv.config();
 
