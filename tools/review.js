@@ -40,9 +40,6 @@ async function postReviewComment(pull_number, owner, repo, comment) {
     owner: owner,
     repo: repo,
     pull_number: pull_number,
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    },
     body: comment
   })
 }
