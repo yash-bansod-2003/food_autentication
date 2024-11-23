@@ -9,6 +9,7 @@ import { Restaurant } from "@/entity/Restaurant";
 import authenticate from "@/middlewares/authenticate";
 import authorization from "@/middlewares/authorization";
 import logger from "@/config/logger";
+import { ROLES } from "@/lib/constants";
 
 const router = Router();
 
@@ -25,35 +26,35 @@ const usersController = new UsersController(
 router.post(
   "/",
   authenticate,
-  authorization(["admin"]),
+  authorization([ROLES.ADMIN]),
   usersController.create.bind(usersController),
 );
 
 router.get(
   "/",
   authenticate,
-  authorization(["admin"]),
+  authorization([ROLES.ADMIN]),
   usersController.findAll.bind(usersController),
 );
 
 router.get(
   "/:id",
   authenticate,
-  authorization(["admin"]),
+  authorization([ROLES.ADMIN]),
   usersController.findOne.bind(usersController),
 );
 
 router.put(
   "/:id",
   authenticate,
-  authorization(["admin"]),
+  authorization([ROLES.ADMIN]),
   usersController.update.bind(usersController),
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorization(["admin"]),
+  authorization([ROLES.ADMIN]),
   usersController.delete.bind(usersController),
 );
 
