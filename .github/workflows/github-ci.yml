@@ -51,6 +51,9 @@ jobs:
 
   code-review:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -63,22 +66,25 @@ jobs:
       - name: Install Dependencies
         run: npm install octokit @google/generative-ai dotenv
 
-      - name: Get changes
+      - name: Get changed TypeScript files
         id: changes
         run: |
-          git fetch --unshallow --quiet
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep '\.ts$')
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
-          echo "Changed files: $CHANGED_FILES"
+          git fetch --unshallow --quiet || true
+          CHANGED_FILES=$(git diff --name-only "${{ github.event.before }}" "${{ github.event.after }}" -- '*.ts')
+          echo "CHANGED_FILES=${CHANGED_FILES}" >> $GITHUB_ENV
+          echo "Changed TypeScript files: ${CHANGED_FILES}"
 
       - name: Run code review
         run: node tools/review.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
+
+      - name: Save Report as Artifact (Optional)
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-review-report
+          path: report.md
 
   # deploy:
   #   name: Deploy to Docker

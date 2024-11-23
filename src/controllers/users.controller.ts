@@ -43,7 +43,7 @@ class UsersController {
   async findAll(req: Request, res: Response, next: NextFunction) {
     this.logger.info("Fetching all users");
     try {
-      const users = await this.userService.findAll();
+      const users = await this.userService.findAll({ where: req.query });
       this.logger.info(`Fetched ${users.length} users`);
       return res.json(users);
     } catch (error) {

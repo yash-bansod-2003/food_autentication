@@ -31,7 +31,9 @@ class RestaurantsController {
   async findAll(req: Request, res: Response, next: NextFunction) {
     try {
       this.logger.info("Fetching all restaurants");
-      const restaurants = await this.restaurantsService.findAll();
+      const restaurants = await this.restaurantsService.findAll({
+        where: req.query,
+      });
       this.logger.info(`Fetched ${restaurants.length} restaurants`);
       return res.json(restaurants);
     } catch (error: unknown) {

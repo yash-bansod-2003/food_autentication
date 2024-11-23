@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { Restaurant } from "./Restaurant";
 import { RefreshToken } from "./RefreshToken";
-
+import { ROLES } from "@/lib/constants";
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -25,7 +25,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ enum: ["user", "manager", "admin"], default: "user" })
+  @Column({ enum: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER], default: "user" })
   role: string;
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.users)
