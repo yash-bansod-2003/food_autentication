@@ -66,8 +66,8 @@ jobs:
       - name: Get changes
         id: changes
         run: |
-          git fetch --unshallow || true
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+          git fetch --unshallow --quiet
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep '\.ts$')
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
           echo "Changed files: $CHANGED_FILES"
 
@@ -75,6 +75,7 @@ jobs:
         run: node tools/review.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
