@@ -7,6 +7,7 @@ import { Restaurant } from "@/entity/Restaurant";
 import authenticate from "@/middlewares/authenticate";
 import authorization from "@/middlewares/authorization";
 import logger from "@/config/logger";
+import { ROLES } from "@/lib/constants";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ import { restaurantCreateValidator } from "@/validators/restaurants.validator";
 router.post(
   "/",
   authenticate,
-  authorization(["admin", "manager"]),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]),
   restaurantCreateValidator,
   restaurantsController.create.bind(restaurantsController),
 );
@@ -29,28 +30,28 @@ router.post(
 router.get(
   "/",
   authenticate,
-  authorization(["admin", "manager"]),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]),
   restaurantsController.findAll.bind(restaurantsController),
 );
 
 router.get(
   "/:id",
   authenticate,
-  authorization(["admin", "manager"]),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]),
   restaurantsController.findOne.bind(restaurantsController),
 );
 
 router.put(
   "/:id",
   authenticate,
-  authorization(["admin", "manager"]),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]),
   restaurantsController.update.bind(restaurantsController),
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorization(["admin", "manager"]),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]),
   restaurantsController.delete.bind(restaurantsController),
 );
 
