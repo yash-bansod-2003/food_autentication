@@ -43,7 +43,7 @@ class TokensService {
     options: FindOneOptions<RefreshToken>,
   ): Promise<RefreshToken | null | undefined> {
     if (this.refreshTokensRepository) {
-      return this.refreshTokensRepository.findOne(options);
+      return await this.refreshTokensRepository.findOne(options);
     }
   }
 
@@ -51,7 +51,7 @@ class TokensService {
     criteria: FindOptionsWhere<RefreshToken>,
   ): Promise<DeleteResult | undefined> {
     if (this.refreshTokensRepository) {
-      return this.refreshTokensRepository.delete(criteria);
+      return await this.refreshTokensRepository.delete(criteria);
     }
   }
 }
