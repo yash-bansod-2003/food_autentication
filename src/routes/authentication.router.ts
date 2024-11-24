@@ -27,10 +27,10 @@ const hashingService = new HashingService();
 
 const accessTokensService = new TokensService(privateKey);
 const refreshTokensService = new TokensService(
-  configuration.jwt_secrets.refresh!,
+  String(configuration.jwt_secrets.refresh),
 );
 const forgotTokensService = new TokensService(
-  configuration.jwt_secrets.forgot!,
+  String(configuration.jwt_secrets.forgot),
 );
 const usersService = new UsersService(usersRepository);
 const authenticationController = new AutenticationController(
