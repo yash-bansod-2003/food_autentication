@@ -135,7 +135,7 @@ class AutenticationController {
       this.logger.debug(`User not found for id: ${id}`);
       if (!user) {
         this.logger.debug(`Profile fetched for user id: ${id}`);
-        return next(createError(404, "user not found"));
+        throw createError(404, "user not found");
       }
       return res.json({ ...user, password: undefined });
     } catch (error) {
