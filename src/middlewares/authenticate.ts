@@ -5,7 +5,7 @@ import configuration from "@/config/configuration";
 
 export default expressjwt({
   secret: jwksClient.expressJwtSecret({
-    jwksUri: configuration.jwks_uri!,
+    jwksUri: String(configuration.jwks_uri),
     cache: true,
     rateLimit: true,
   }) as GetVerificationKey,
@@ -13,7 +13,7 @@ export default expressjwt({
   getToken(req: Request) {
     const authorizationHeader = req.headers.authorization;
 
-    if (authorizationHeader && !!authorizationHeader?.split(" ")?.[1]) {
+    if (authorizationHeader && Boolean(authorizationHeader?.split(" ")?.[1])) {
       const token = authorizationHeader.split(" ")[1];
       if (token) {
         return token;

@@ -30,11 +30,11 @@ const accessTokensService = new TokensService(privateKey);
 
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 const refreshTokensService = new TokensService(
-  configuration.jwt_secrets.refresh!,
+  String(configuration.jwt_secrets.refresh),
   refreshTokenRepository,
 );
 const forgotTokensService = new TokensService(
-  configuration.jwt_secrets.forgot!,
+  String(configuration.jwt_secrets.forgot),
 );
 const usersService = new UsersService(usersRepository);
 const authenticationController = new AutenticationController(
