@@ -13,7 +13,7 @@ export default expressjwt({
   getToken(req: Request) {
     const authorizationHeader = req.headers.authorization;
 
-    if (authorizationHeader && !!authorizationHeader?.split(" ")?.[1]) {
+    if (authorizationHeader && Boolean(authorizationHeader?.split(" ")?.[1])) {
       const token = authorizationHeader.split(" ")[1];
       if (token) {
         return token;
