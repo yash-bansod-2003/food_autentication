@@ -86,7 +86,7 @@ class AutenticationController {
       const saveRefreshToken = await this.refreshTokensService.create({ user });
 
       if (!saveRefreshToken) {
-        return next(createError(500, "internal server error"));
+        throw createError(500, "refresh token not persist");
       }
 
       this.logger.debug("generating access token");
@@ -121,6 +121,7 @@ class AutenticationController {
     } catch (error) {
       this.logger.error(`Error during login: ${(error as Error).message}`);
       next(error);
+      return;
     }
   }
 
