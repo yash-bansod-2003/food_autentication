@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import JsonWebToken from "jsonwebtoken";
 import UserService from "@/services/users.service";
 import TokensService from "@/services/tokens.service";
-import { CreateUserDto } from "@/dto/users";
+import { CreateUserDto, LoginUserDto } from "@/dto/users";
 import { ForgotPasswordDto, ResetPasswordDto } from "@/dto/autentication";
 import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
@@ -48,10 +48,7 @@ class AutenticationController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body as Pick<
-        CreateUserDto,
-        "email" | "password"
-      >;
+      const { email, password } = req.body as LoginUserDto;
       this.logger.debug(`Attempting login for user with email: ${email}`);
       const user = await this.userService.findOne({
         where: { email },
@@ -89,7 +86,7 @@ class AutenticationController {
       const saveRefreshToken = await this.refreshTokensService.create({ user });
 
       if (!saveRefreshToken) {
-        return next(createError(500, "internal server error"));
+        throw createError(500, "refresh token not persist");
       }
 
       this.logger.debug("generating access token");
@@ -124,6 +121,7 @@ class AutenticationController {
     } catch (error) {
       this.logger.error(`Error during login: ${(error as Error).message}`);
       next(error);
+      return;
     }
   }
 
@@ -137,7 +135,7 @@ class AutenticationController {
       this.logger.debug(`User not found for id: ${id}`);
       if (!user) {
         this.logger.debug(`Profile fetched for user id: ${id}`);
-        return next(createError(404, "user not found"));
+        throw createError(404, "user not found");
       }
       return res.json({ ...user, password: undefined });
     } catch (error) {
