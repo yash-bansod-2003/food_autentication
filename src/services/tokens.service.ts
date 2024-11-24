@@ -33,7 +33,7 @@ class TokensService {
 
   async create(
     createRefreshTokenDto: DeepPartial<RefreshToken>,
-  ): Promise<RefreshToken | undefined> {
+  ): Promise<RefreshToken | void> {
     if (this.refreshTokensRepository) {
       return await this.refreshTokensRepository.save(createRefreshTokenDto);
     }
@@ -41,7 +41,7 @@ class TokensService {
 
   async findOne(
     options: FindOneOptions<RefreshToken>,
-  ): Promise<RefreshToken | null | undefined> {
+  ): Promise<RefreshToken | null | void> {
     if (this.refreshTokensRepository) {
       return this.refreshTokensRepository.findOne(options);
     }
@@ -49,7 +49,7 @@ class TokensService {
 
   async delete(
     criteria: FindOptionsWhere<RefreshToken>,
-  ): Promise<DeleteResult | undefined> {
+  ): Promise<DeleteResult | void> {
     if (this.refreshTokensRepository) {
       return this.refreshTokensRepository.delete(criteria);
     }

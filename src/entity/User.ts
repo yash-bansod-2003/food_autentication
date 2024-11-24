@@ -8,7 +8,8 @@ import {
 import { Restaurant } from "./Restaurant";
 import { RefreshToken } from "./RefreshToken";
 import { ROLES } from "@/lib/constants";
-@Entity()
+
+@Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
   id: number;

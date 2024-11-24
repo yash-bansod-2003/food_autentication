@@ -30,7 +30,6 @@ const errorHandler = (
         path: "",
       },
     ],
-    ...(configuration.node_env !== "production" && { stack: err.stack }),
   };
 
   if (err instanceof ZodError) {
@@ -66,7 +65,10 @@ const errorHandler = (
       ],
     };
   }
-  return res.status(errorResponse.code).json(errorResponse);
+  return res.status(errorResponse.code).json({
+    ...errorResponse,
+    ...(configuration.node_env !== "production" && { stack: err.stack }),
+  });
 };
 
 export default errorHandler;

@@ -3,20 +3,24 @@ import { NextFunction, Request, Response } from "express";
 
 export const userCreateValidator = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) => {
-  const validationSchema = z.object({
-    firstName: z.string(),
-    lastName: z.string(),
-    email: z.string(),
-    password: z.string(),
-    restaurantId: z.string().optional(),
-  });
+  const validationSchema = z
+    .object({
+      firstName: z.string(),
+      lastName: z.string(),
+      email: z.string(),
+      password: z.string(),
+      restaurantId: z.string().optional(),
+    })
+    .strict();
   try {
     validationSchema.parse(req.body);
-    return next();
+    next();
+    return;
   } catch (error) {
-    return next(error);
+    next(error);
+    return;
   }
 };
