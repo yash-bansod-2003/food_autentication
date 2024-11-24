@@ -12,3 +12,8 @@ export class UpdateUserDto {
   age: number;
   restaurantId: number;
 }
+
+export class LoginUserDto {
+  email: string;
+  password: string;
+}

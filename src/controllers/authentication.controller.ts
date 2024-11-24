@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import JsonWebToken from "jsonwebtoken";
 import UserService from "@/services/users.service";
 import TokensService from "@/services/tokens.service";
-import { CreateUserDto } from "@/dto/users";
+import { CreateUserDto, LoginUserDto } from "@/dto/users";
 import { ForgotPasswordDto, ResetPasswordDto } from "@/dto/autentication";
 import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
@@ -48,10 +48,7 @@ class AutenticationController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body as Pick<
-        CreateUserDto,
-        "email" | "password"
-      >;
+      const { email, password } = req.body as LoginUserDto;
       this.logger.debug(`Attempting login for user with email: ${email}`);
       const user = await this.userService.findOne({
         where: { email },

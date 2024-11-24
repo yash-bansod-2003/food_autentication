@@ -51,28 +51,22 @@ jobs:
 
   code-review:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: read
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: "22.11.0"
 
-      - name: Install Dependencies
-        run: npm install octokit @google/generative-ai dotenv
+      - name: Install dependencies
+        run: npm install @google/generative-ai dotenv
 
       - name: Get changed TypeScript files
-        id: changes
-        run: |
-          git fetch --unshallow --quiet || true
-          CHANGED_FILES=$(git diff --name-only "${{ github.event.before }}" "${{ github.event.after }}" -- '*.ts')
-          echo "CHANGED_FILES=${CHANGED_FILES}" >> $GITHUB_ENV
-          echo "Changed TypeScript files: ${CHANGED_FILES}"
+        id: changed-files
+        run: echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.ts$')" >> $GITHUB_ENV
 
       - name: Run code review
         run: node tools/review.js
