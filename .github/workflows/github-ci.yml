@@ -49,37 +49,6 @@ jobs:
       - name: Build the Application
         run: npm run build
 
-  code-review:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "22.11.0"
-
-      - name: Install dependencies
-        run: npm install @google/generative-ai dotenv
-
-      - name: Get changed TypeScript files
-        id: changed-files
-        run: echo "CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...${{ github.head_ref }} | grep '\.ts$')" >> $GITHUB_ENV
-
-      - name: Run code review
-        run: node tools/review.js
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CHANGED_FILES: ${{ env.CHANGED_FILES }}
-
-      - name: Save Report as Artifact (Optional)
-        uses: actions/upload-artifact@v3
-        with:
-          name: code-review-report
-          path: report.md
-
   # deploy:
   #   name: Deploy to Docker
   #   runs-on: ubuntu-latest
