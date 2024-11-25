@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn,
+} from "typeorm";
 import { User } from "./User";
 
 @Entity("restaurants")
@@ -8,6 +15,15 @@ export class Restaurant {
 
   @Column()
   name: string;
+
+  @Column()
+  address: string;
+
+  @CreateDateColumn()
+  created_at: number;
+
+  @UpdateDateColumn()
+  updated_at: number;
 
   @OneToMany(() => User, (user) => user.restaurant)
   users: User[];

@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { Router } from "express";
 import { AppDataSource } from "@/data-source";
 import { User } from "@/entity/User";
+import { RefreshToken } from "@/entity/RefreshToken";
 import logger from "@/config/logger";
 import configuration from "@/config/configuration";
 import AutenticationController from "@/controllers/authentication.controller";
@@ -26,8 +27,11 @@ try {
 const hashingService = new HashingService();
 
 const accessTokensService = new TokensService(privateKey);
+
+const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 const refreshTokensService = new TokensService(
   String(configuration.jwt_secrets.refresh),
+  refreshTokenRepository,
 );
 const forgotTokensService = new TokensService(
   String(configuration.jwt_secrets.forgot),

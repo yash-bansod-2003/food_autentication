@@ -40,9 +40,11 @@ class AutenticationController {
         ...rest,
       });
       this.logger.debug("user registered successfully");
-      res.json(user);
+      res.json({ ...user, password: undefined });
+      return;
     } catch (error) {
       next(error);
+      return;
     }
   }
 
@@ -92,10 +94,9 @@ class AutenticationController {
       this.logger.debug("generating access token");
       const accessToken = this.accessTokensService.sign(payload, signOptions);
 
-      const refreshToken = this.accessTokensService.sign(
+      const refreshToken = this.refreshTokensService.sign(
         { ...payload, jti: String(saveRefreshToken.id) },
         {
-          algorithm: "HS256",
           expiresIn: "1y",
           issuer: "food_authentication",
         },
@@ -117,7 +118,8 @@ class AutenticationController {
         secure: false,
       });
 
-      return res.json({ id: user.id });
+      res.json({ id: user.id });
+      return;
     } catch (error) {
       this.logger.error(`Error during login: ${(error as Error).message}`);
       next(error);

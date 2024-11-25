@@ -18,7 +18,7 @@ export const createServer = (): Express => {
     .use(cookieParser())
     .use(express.static("public"))
     .get("/status", (_, res) => {
-      return res.json({ ok: true });
+      res.json({ ok: true });
     })
     .get("/message/:name", (req, res) => {
       res.json({ message: `hello ${req.params.name}` });
