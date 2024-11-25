@@ -8,8 +8,8 @@ export const userCreateValidator = (
 ) => {
   const validationSchema = z
     .object({
-      firstName: z.string(),
-      lastName: z.string(),
+      firstname: z.string(),
+      lastname: z.string(),
       email: z.string(),
       password: z.string(),
       restaurantId: z.string().optional(),

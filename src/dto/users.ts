@@ -1,14 +1,14 @@
 export class CreateUserDto {
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   email: string;
   password: string;
   restaurantId: number;
 }
 
 export class UpdateUserDto {
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   age: number;
   restaurantId: number;
 }
