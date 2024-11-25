@@ -4,6 +4,8 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  UpdateDateColumn,
+  CreateDateColumn,
 } from "typeorm";
 import { Restaurant } from "./Restaurant";
 import { RefreshToken } from "./RefreshToken";
@@ -26,8 +28,17 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ enum: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER], default: "user" })
+  @Column({
+    enum: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER],
+    default: ROLES.USER,
+  })
   role: string;
+
+  @CreateDateColumn()
+  created_at: number;
+
+  @UpdateDateColumn()
+  updated_at: number;
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.users)
   restaurant: Restaurant;
