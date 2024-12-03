@@ -2,8 +2,8 @@
 import fs from "node:fs";
 import { Router } from "express";
 import { AppDataSource } from "@/data-source";
-import { User } from "@/entity/User";
-import { RefreshToken } from "@/entity/RefreshToken";
+import { User } from "@/models/User";
+import { RefreshToken } from "@/models/RefreshToken";
 import logger from "@/config/logger";
 import configuration from "@/config/configuration";
 import AutenticationController from "@/controllers/authentication.controller";
