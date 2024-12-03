@@ -3,7 +3,7 @@ import { Router } from "express";
 import RestaurantsController from "@/controllers/restaurants.controller";
 import RestaurantsService from "@/services/restaurants.service";
 import { AppDataSource } from "@/data-source";
-import { Restaurant } from "@/entity/Restaurant";
+import { Restaurant } from "@/models/Restaurant";
 import authenticate from "@/middlewares/authenticate";
 import authorization from "@/middlewares/authorization";
 import logger from "@/config/logger";

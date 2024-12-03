@@ -2,7 +2,7 @@ import { expressjwt } from "express-jwt";
 import configuration from "@/config/configuration";
 import { Request } from "express";
 import { AppDataSource } from "@/data-source";
-import { RefreshToken } from "@/entity/RefreshToken";
+import { RefreshToken } from "@/models/RefreshToken";
 import logger from "@/config/logger";
 
 export default expressjwt({
