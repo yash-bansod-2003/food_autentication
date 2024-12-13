@@ -13,10 +13,10 @@ export class RefreshToken {
   id: number;
 
   @CreateDateColumn()
-  created_at: number;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updated_at: number;
+  updated_at: Date;
 
   @ManyToOne(() => User, (user) => user.refreshTokens)
   user: User;

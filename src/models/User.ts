@@ -16,29 +16,30 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "text" })
   firstname: string;
 
-  @Column()
+  @Column({ type: "text" })
   lastname: string;
 
-  @Column({ unique: true })
+  @Column({ type: "text", unique: true })
   email: string;
 
-  @Column()
+  @Column({ type: "text" })
   password: string;
 
   @Column({
+    type: "text",
     enum: [ROLES.ADMIN, ROLES.MANAGER, ROLES.USER],
     default: ROLES.USER,
   })
   role: string;
 
   @CreateDateColumn()
-  created_at: number;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updated_at: number;
+  updated_at: Date;
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.users)
   restaurant: Restaurant;
