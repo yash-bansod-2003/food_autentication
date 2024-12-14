@@ -80,7 +80,7 @@ class AutenticationController {
 
       const signOptions: JsonWebToken.SignOptions = {
         algorithm: "RS256",
-        expiresIn: "1h",
+        expiresIn: "10s",
         issuer: "food_authentication",
       };
 
@@ -217,11 +217,11 @@ class AutenticationController {
   }
 
   async refresh(req: Request, res: Response, next: NextFunction) {
-    const { refreshToken } = req.body as Record<string, string>;
+    const { refreshToken } = req.cookies;
     this.logger.debug(`initiate refresh token process`);
 
     try {
-      const match = this.refreshTokensService.verify(refreshToken);
+      const match = this.refreshTokensService.verify(refreshToken as string);
       if (!match) {
         this.logger.debug("invalid token");
         return next(createError.Unauthorized());
@@ -248,11 +248,13 @@ class AutenticationController {
         sub: String(user.id),
         role: user.role,
       };
-      const tokenOptions: JsonWebToken.SignOptions = {
-        expiresIn: "30m",
+      const signOptions: JsonWebToken.SignOptions = {
+        expiresIn: "10s",
+        issuer: "food_authentication",
+        algorithm: "RS256",
       };
       this.logger.debug("generating access token");
-      const accessToken = this.accessTokensService.sign(payload, tokenOptions);
+      const accessToken = this.accessTokensService.sign(payload, signOptions);
 
       const deleteUserRefreshToken = await this.refreshTokensService.delete({
         id: Number(jti),
@@ -278,11 +280,30 @@ class AutenticationController {
       this.logger.debug("generating refresh token");
       const refreshTokenNew = this.refreshTokensService.sign(
         { ...payload, jti: String(savedRefreshToken.id) },
-        tokenOptions,
+        {
+          expiresIn: "1y",
+          issuer: "food_authentication",
+        },
       );
 
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        domain: configuration.cookies.domain,
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60,
+        secure: false,
+      });
+
+      res.cookie("refreshToken", refreshTokenNew, {
+        httpOnly: true,
+        domain: configuration.cookies.domain,
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        secure: false,
+      });
+
       this.logger.debug("token refreshed successfully");
-      return res.json({ accessToken, refreshToken: refreshTokenNew });
+      return res.json({ status: "success" });
     } catch (error) {
       this.logger.debug(error);
       return next(error);
@@ -307,8 +328,9 @@ class AutenticationController {
         this.logger.debug("delete user refresh tokens failed");
         return next(createError.InternalServerError());
       }
-
-      return res.json({ accessToken: "", refreshToken: "" });
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      return res.json({ id: user.id });
     } catch (error) {
       this.logger.error("logout user failed", error);
       next(createError.InternalServerError());

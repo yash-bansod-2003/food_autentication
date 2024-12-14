@@ -5,6 +5,8 @@ import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import zodErrorAdapter from "@/adapters/error/zod.adapter";
 import httpErrorAdapter from "@/adapters/error/http-error.adapter";
 import configuration from "@/config/configuration";
+import { UnauthorizedError } from "express-jwt";
+
 export interface ErrorResponse {
   name: string;
   code: number;
@@ -43,7 +45,7 @@ const errorHandler = (
   if (err instanceof TokenExpiredError) {
     errorResponse = {
       name: err.name,
-      code: 400,
+      code: 401,
       errors: [
         {
           message: err.message,
@@ -65,6 +67,20 @@ const errorHandler = (
       ],
     };
   }
+
+  if (err instanceof UnauthorizedError) {
+    errorResponse = {
+      name: err.name,
+      code: 401,
+      errors: [
+        {
+          message: err.message,
+          path: "",
+        },
+      ],
+    };
+  }
+
   return res.status(errorResponse.code).json({
     ...errorResponse,
     ...(configuration.node_env !== "production" && { stack: err.stack }),

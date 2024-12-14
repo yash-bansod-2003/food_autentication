@@ -11,6 +11,7 @@ import UsersService from "@/services/users.service";
 import TokensService from "@/services/tokens.service";
 import HashingService from "@/services/hashing.service";
 import authenticationMiddleware from "@/middlewares/authenticate";
+import authenticationRefreshTokenMiddleware from "@/middlewares/authenticate-refreshToken";
 import { userCreateValidator } from "@/validators/users.validators";
 
 const router = Router();
@@ -29,6 +30,8 @@ const hashingService = new HashingService();
 const accessTokensService = new TokensService(privateKey);
 
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
+console.log(configuration.jwt_secrets.refresh);
+
 const refreshTokensService = new TokensService(
   String(configuration.jwt_secrets.refresh),
   refreshTokenRepository,
@@ -71,6 +74,18 @@ router.post(
 router.put(
   "/reset/:token",
   authenticationController.reset.bind(authenticationController),
+);
+
+router.get(
+  "/refresh",
+  authenticationRefreshTokenMiddleware,
+  authenticationController.refresh.bind(authenticationController),
+);
+
+router.post(
+  "/logout",
+  authenticationMiddleware,
+  authenticationController.logout.bind(authenticationController),
 );
 
 export default router;
