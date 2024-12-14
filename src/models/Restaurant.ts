@@ -13,17 +13,17 @@ export class Restaurant {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "text" })
   name: string;
 
-  @Column()
+  @Column({ type: "text" })
   address: string;
 
   @CreateDateColumn()
-  created_at: number;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updated_at: number;
+  updated_at: Date;
 
   @OneToMany(() => User, (user) => user.restaurant)
   users: User[];

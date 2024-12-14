@@ -13,6 +13,7 @@ export default expressjwt({
       string,
       string | undefined
     >;
+    console.log("token", token);
     return token;
   },
   isRevoked: async (req: Request, token) => {

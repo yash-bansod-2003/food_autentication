@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import { Router } from "express";
+import { Router, RequestHandler } from "express";
 import RestaurantsController from "@/controllers/restaurants.controller";
 import RestaurantsService from "@/services/restaurants.service";
 import { AppDataSource } from "@/data-source";
@@ -22,37 +21,47 @@ import { restaurantCreateValidator } from "@/validators/restaurants.validator";
 router.post(
   "/",
   authenticate,
-  authorization([ROLES.ADMIN, ROLES.MANAGER]),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]) as RequestHandler,
   restaurantCreateValidator,
-  restaurantsController.create.bind(restaurantsController),
+  async (req, res, next) => {
+    await restaurantsController.create(req, res, next);
+  },
 );
 
 router.get(
   "/",
   authenticate,
-  authorization([ROLES.ADMIN, ROLES.MANAGER]),
-  restaurantsController.findAll.bind(restaurantsController),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]) as RequestHandler,
+  async (req, res, next) => {
+    await restaurantsController.findAll(req, res, next);
+  },
 );
 
 router.get(
   "/:id",
   authenticate,
-  authorization([ROLES.ADMIN, ROLES.MANAGER]),
-  restaurantsController.findOne.bind(restaurantsController),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]) as RequestHandler,
+  async (req, res, next) => {
+    await restaurantsController.findOne(req, res, next);
+  },
 );
 
 router.put(
   "/:id",
   authenticate,
-  authorization([ROLES.ADMIN, ROLES.MANAGER]),
-  restaurantsController.update.bind(restaurantsController),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]) as RequestHandler,
+  async (req, res, next) => {
+    await restaurantsController.update(req, res, next);
+  },
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorization([ROLES.ADMIN, ROLES.MANAGER]),
-  restaurantsController.delete.bind(restaurantsController),
+  authorization([ROLES.ADMIN, ROLES.MANAGER]) as RequestHandler,
+  async (req, res, next) => {
+    await restaurantsController.delete(req, res, next);
+  },
 );
 
 export default router;
