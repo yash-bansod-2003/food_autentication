@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import { Router } from "express";
+import { Router, RequestHandler } from "express";
 import UsersController from "@/controllers/users.controller";
 import UsersService from "@/services/users.service";
 import RestaurantsService from "@/services/restaurants.service";
@@ -26,35 +25,37 @@ const usersController = new UsersController(
 router.post(
   "/",
   authenticate,
-  authorization([ROLES.ADMIN]),
-  usersController.create.bind(usersController),
+  authorization([ROLES.ADMIN]) as RequestHandler,
+  async (req, res, next) => {
+    await usersController.create(req, res, next);
+  },
 );
 
 router.get(
   "/",
   authenticate,
-  authorization([ROLES.ADMIN]),
+  authorization([ROLES.ADMIN]) as RequestHandler,
   usersController.findAll.bind(usersController),
 );
 
 router.get(
   "/:id",
   authenticate,
-  authorization([ROLES.ADMIN]),
+  authorization([ROLES.ADMIN]) as RequestHandler,
   usersController.findOne.bind(usersController),
 );
 
 router.put(
   "/:id",
   authenticate,
-  authorization([ROLES.ADMIN]),
+  authorization([ROLES.ADMIN]) as RequestHandler,
   usersController.update.bind(usersController),
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorization([ROLES.ADMIN]),
+  authorization([ROLES.ADMIN]) as RequestHandler,
   usersController.delete.bind(usersController),
 );
 

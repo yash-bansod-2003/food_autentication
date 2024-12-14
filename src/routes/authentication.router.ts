@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import fs from "node:fs";
 import { Router } from "express";
 import { AppDataSource } from "@/data-source";
@@ -30,7 +29,6 @@ const hashingService = new HashingService();
 const accessTokensService = new TokensService(privateKey);
 
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
-console.log(configuration.jwt_secrets.refresh);
 
 const refreshTokensService = new TokensService(
   String(configuration.jwt_secrets.refresh),
@@ -49,43 +47,36 @@ const authenticationController = new AutenticationController(
   logger,
 );
 
-router.post(
-  "/register",
-  userCreateValidator,
-  authenticationController.register.bind(authenticationController),
-);
+router.post("/register", userCreateValidator, async (req, res, next) => {
+  await authenticationController.register(req, res, next);
+});
 
-router.post(
-  "/login",
-  authenticationController.login.bind(authenticationController),
-);
+router.post("/login", async (req, res, next) => {
+  await authenticationController.login(req, res, next);
+});
 
-router.get(
-  "/profile",
-  authenticationMiddleware,
-  authenticationController.profile.bind(authenticationController),
-);
+router.get("/profile", authenticationMiddleware, async (req, res, next) => {
+  await authenticationController.profile(req, res, next);
+});
 
-router.post(
-  "/forgot",
-  authenticationController.forgot.bind(authenticationController),
-);
+router.post("/forgot", async (req, res, next) => {
+  await authenticationController.forgot(req, res, next);
+});
 
-router.put(
-  "/reset/:token",
-  authenticationController.reset.bind(authenticationController),
-);
+router.put("/reset/:token", async (req, res, next) => {
+  await authenticationController.reset(req, res, next);
+});
 
 router.get(
   "/refresh",
   authenticationRefreshTokenMiddleware,
-  authenticationController.refresh.bind(authenticationController),
+  async (req, res, next) => {
+    await authenticationController.refresh(req, res, next);
+  },
 );
 
-router.post(
-  "/logout",
-  authenticationMiddleware,
-  authenticationController.logout.bind(authenticationController),
-);
+router.post("/logout", authenticationMiddleware, async (req, res, next) => {
+  await authenticationController.logout(req, res, next);
+});
 
 export default router;
