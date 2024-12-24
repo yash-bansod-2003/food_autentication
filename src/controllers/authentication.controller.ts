@@ -249,9 +249,9 @@ class AutenticationController {
         role: user.role,
       };
       const signOptions: JsonWebToken.SignOptions = {
-        expiresIn: "10s",
-        issuer: "food_authentication",
         algorithm: "RS256",
+        issuer: "food_authentication",
+        expiresIn: "10s",
       };
       this.logger.debug("generating access token");
       const accessToken = this.accessTokensService.sign(payload, signOptions);
