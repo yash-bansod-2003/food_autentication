@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package.json ./
 
 # Install app dependencies [it runs while building the image]
-RUN npm install
+RUN npm install --ignore-scripts
 
 # Copy the rest of our app's source code into the container
 COPY . .

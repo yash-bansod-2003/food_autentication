@@ -4,7 +4,7 @@ WORKDIR /build
 
 COPY package.json ./
 
-RUN npm install
+RUN npm install --ignore-scripts
 
 COPY . .
 
@@ -20,7 +20,7 @@ COPY --from=builder /build/package.json ./
 
 RUN npm install --ignore-scripts --omit=dev \
   && npm uninstall bcrypt \
-  && npm install bcrypt
+  && npm install bcrypt --ignore-scripts
 
 COPY --from=builder /build/dist ./dist/
 
