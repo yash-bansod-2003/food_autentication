@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import express, { Express } from "express";
+import express, { ErrorRequestHandler, Express } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
@@ -26,6 +26,6 @@ export const createServer = (): Express => {
     .use("/auth", authRouter)
     .use("/users", usersRouter)
     .use("/restaurants", restaurantsRouter)
-    .use(errorHandler);
+    .use(errorHandler as unknown as ErrorRequestHandler);
   return app;
 };
