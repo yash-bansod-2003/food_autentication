@@ -1,3 +1,5 @@
-paths:
-  exclude:
-    - http_client/**
+version: 2
+secret:
+  ignored_paths:
+    - "**/README.md"
+    - "http_client/*"
