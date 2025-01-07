@@ -80,7 +80,7 @@ class AutenticationController {
 
       const signOptions: JsonWebToken.SignOptions = {
         algorithm: "RS256",
-        expiresIn: "10s",
+        expiresIn: "1h",
         issuer: "food_authentication",
       };
 
@@ -106,7 +106,7 @@ class AutenticationController {
         httpOnly: true,
         domain: configuration.cookies.domain,
         sameSite: "strict",
-        maxAge: 1000 * 10,
+        maxAge: 1000 * 60 * 60,
         secure: false,
       });
 
@@ -252,7 +252,7 @@ class AutenticationController {
 
       const signOptions: JsonWebToken.SignOptions = {
         algorithm: "RS256",
-        expiresIn: "10s",
+        expiresIn: "1h",
         issuer: "food_authentication",
       };
 
@@ -293,7 +293,7 @@ class AutenticationController {
         httpOnly: true,
         domain: configuration.cookies.domain,
         sameSite: "strict",
-        maxAge: 1000 * 10,
+        maxAge: 1000 * 60 * 60,
         secure: false,
       });
 
