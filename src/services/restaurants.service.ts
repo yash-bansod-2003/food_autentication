@@ -20,8 +20,10 @@ class UserService {
     return await this.restaurantsRepository.save(createRestaurantDto, options);
   }
 
-  findAll(options?: FindManyOptions<Restaurant>): Promise<Restaurant[]> {
-    return this.restaurantsRepository.find(options);
+  findAll(
+    options?: FindManyOptions<Restaurant>,
+  ): Promise<[Restaurant[], number]> {
+    return this.restaurantsRepository.findAndCount(options);
   }
 
   findOne(options: FindOneOptions<Restaurant>): Promise<Restaurant | null> {

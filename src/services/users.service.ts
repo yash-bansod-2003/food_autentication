@@ -30,8 +30,8 @@ class UsersService {
    * @param options The options to be passed to the find method of the repository.
    * @returns A Promise that resolves to an array of User objects.
    */
-  findAll(options?: FindManyOptions<User>): Promise<User[]> {
-    return this.usersRepository.find(options);
+  async findAll(options?: FindManyOptions<User>): Promise<[User[], number]> {
+    return await this.usersRepository.findAndCount(options);
   }
 
   /**
@@ -40,8 +40,8 @@ class UsersService {
    * @param options The options to be passed to the findOne method of the repository.
    * @returns A Promise that resolves to the User, or null if no User matches the criteria.
    */
-  findOne(options: FindOneOptions<User>): Promise<User | null> {
-    return this.usersRepository.findOne(options);
+  async findOne(options: FindOneOptions<User>): Promise<User | null> {
+    return await this.usersRepository.findOne(options);
   }
 
   /**
@@ -51,11 +51,11 @@ class UsersService {
    * @param userUpdateDto The User object with the changes to be applied.
    * @returns A Promise that resolves to the result of the update operation.
    */
-  update(
+  async update(
     criteria: FindOptionsWhere<User>,
     userUpdateDto: QueryDeepPartialEntity<User>,
   ): Promise<UpdateResult> {
-    return this.usersRepository.update(criteria, userUpdateDto);
+    return await this.usersRepository.update(criteria, userUpdateDto);
   }
 
   /**
@@ -64,8 +64,8 @@ class UsersService {
    * @param criteria The criteria to search for the user to be deleted.
    * @returns A Promise that resolves to the result of the delete operation.
    */
-  delete(criteria: FindOptionsWhere<User>): Promise<DeleteResult> {
-    return this.usersRepository.delete(criteria);
+  async delete(criteria: FindOptionsWhere<User>): Promise<DeleteResult> {
+    return await this.usersRepository.delete(criteria);
   }
 }
 
