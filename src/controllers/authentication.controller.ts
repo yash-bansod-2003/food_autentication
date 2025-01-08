@@ -80,7 +80,7 @@ class AutenticationController {
 
       const signOptions: JsonWebToken.SignOptions = {
         algorithm: "RS256",
-        expiresIn: "10s",
+        expiresIn: "1h",
         issuer: "food_authentication",
       };
 
@@ -246,13 +246,16 @@ class AutenticationController {
 
       const payload: JsonWebToken.JwtPayload = {
         sub: String(user.id),
+        restaurantId: user?.restaurant?.id ?? null,
         role: user.role,
       };
+
       const signOptions: JsonWebToken.SignOptions = {
         algorithm: "RS256",
+        expiresIn: "1h",
         issuer: "food_authentication",
-        expiresIn: "10s",
       };
+
       this.logger.debug("generating access token");
       const accessToken = this.accessTokensService.sign(payload, signOptions);
 
@@ -320,6 +323,7 @@ class AutenticationController {
         this.logger.debug("user not found");
         return next(createError.NotFound("user not found"));
       }
+
       const deleteUserRefreshTokens = await this.refreshTokensService.delete({
         user: { id: user.id },
       });
@@ -328,8 +332,10 @@ class AutenticationController {
         this.logger.debug("delete user refresh tokens failed");
         return next(createError.InternalServerError());
       }
+
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
+
       return res.json({ id: user.id });
     } catch (error) {
       this.logger.error("logout user failed", error);

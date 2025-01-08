@@ -9,6 +9,7 @@ import authenticate from "@/middlewares/authenticate";
 import authorization from "@/middlewares/authorization";
 import logger from "@/config/logger";
 import { ROLES } from "@/lib/constants";
+import { userCreateValidator } from "@/validators/users.validators";
 
 const router = Router();
 
@@ -25,6 +26,7 @@ const usersController = new UsersController(
 router.post(
   "/",
   authenticate,
+  userCreateValidator,
   authorization([ROLES.ADMIN]) as RequestHandler,
   async (req, res, next) => {
     await usersController.create(req, res, next);
@@ -35,28 +37,36 @@ router.get(
   "/",
   authenticate,
   authorization([ROLES.ADMIN]) as RequestHandler,
-  usersController.findAll.bind(usersController),
+  async (req, res, next) => {
+    await usersController.findAll(req, res, next);
+  },
 );
 
 router.get(
   "/:id",
   authenticate,
   authorization([ROLES.ADMIN]) as RequestHandler,
-  usersController.findOne.bind(usersController),
+  async (req, res, next) => {
+    await usersController.findOne(req, res, next);
+  },
 );
 
 router.put(
   "/:id",
   authenticate,
   authorization([ROLES.ADMIN]) as RequestHandler,
-  usersController.update.bind(usersController),
+  async (req, res, next) => {
+    await usersController.update(req, res, next);
+  },
 );
 
 router.delete(
   "/:id",
   authenticate,
   authorization([ROLES.ADMIN]) as RequestHandler,
-  usersController.delete.bind(usersController),
+  async (req, res, next) => {
+    await usersController.delete(req, res, next);
+  },
 );
 
 export default router;
