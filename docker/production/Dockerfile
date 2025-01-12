@@ -12,9 +12,11 @@ RUN npm run build
 
 FROM node:20-alpine AS runner
 
-ENV NODE_ENV=production
+RUN mkdir -p /home/node/app
 
-WORKDIR /app
+WORKDIR /home/node/app
+
+ENV NODE_ENV=production
 
 COPY --from=builder /build/package.json ./
 
