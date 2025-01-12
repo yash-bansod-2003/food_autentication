@@ -15,8 +15,20 @@ export const userCreateValidator = (
       restaurantId: z.string().optional(),
     })
     .strict();
+
+  const queryValidationSchema = z
+    .object({
+      restaurantId: z.string().optional(),
+      page: z.number().optional(),
+      limit: z.number().optional(),
+      firstname: z.string(),
+      lastname: z.string(),
+      email: z.string(),
+    })
+    .strict();
   try {
     validationSchema.parse(req.body);
+    queryValidationSchema.parse(req.query);
     next();
     return;
   } catch (error) {

@@ -29,13 +29,17 @@ class RestaurantsController {
   }
 
   async findAll(req: Request, res: Response, next: NextFunction) {
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+    const skip = (page - 1) * limit;
     try {
       this.logger.info("Fetching all restaurants");
-      const restaurants = await this.restaurantsService.findAll({
-        where: req.query,
+      const [restaurants, total] = await this.restaurantsService.findAll({
+        skip,
+        take: limit,
       });
       this.logger.info(`Fetched ${restaurants.length} restaurants`);
-      return res.json(restaurants);
+      return res.json({ page, limit, total, data: restaurants });
     } catch (error: unknown) {
       this.logger.error(
         `Error fetching all restaurants: ${(error as Error).message}`,
