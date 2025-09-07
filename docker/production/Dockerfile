@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /build
 
@@ -10,7 +10,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:24-alpine AS runner
 
 RUN mkdir -p /home/node/app
 
@@ -26,6 +26,6 @@ RUN npm install --ignore-scripts --omit=dev \
 
 COPY --from=builder /build/dist ./
 
-EXPOSE 5001
+EXPOSE 80
 
 CMD [ "npm" , "start" ]
