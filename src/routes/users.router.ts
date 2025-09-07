@@ -1,15 +1,15 @@
 import { Router, RequestHandler } from "express";
-import UsersController from "@/controllers/users.controller";
-import UsersService from "@/services/users.service";
-import RestaurantsService from "@/services/restaurants.service";
-import { AppDataSource } from "@/data-source";
-import { User } from "@/models/User";
-import { Restaurant } from "@/models/Restaurant";
-import authenticate from "@/middlewares/authenticate";
-import authorization from "@/middlewares/authorization";
-import logger from "@/config/logger";
-import { ROLES } from "@/lib/constants";
-import { userCreateValidator } from "@/validators/users.validators";
+import UsersController from "@/controllers/users.controller.js";
+import UsersService from "@/services/users.service.js";
+import RestaurantsService from "@/services/restaurants.service.js";
+import { AppDataSource } from "@/data-source.js";
+import { User } from "@/models/user.js";
+import { Restaurant } from "@/models/restaurant.js";
+import authenticate from "@/middlewares/authenticate.js";
+import authorization from "@/middlewares/authorization.js";
+import logger from "@/lib/logger.js";
+import { ROLES } from "@/lib/constants.js";
+import { userCreateValidator } from "@/validators/users.validators.js";
 
 const router = Router();
 

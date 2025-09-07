@@ -3,17 +3,18 @@ import express, { ErrorRequestHandler, Express } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import usersRouter from "@/routes/users.router";
-import authRouter from "@/routes/authentication.router";
-import restaurantsRouter from "@/routes/restaurants.router";
-import errorHandler from "@/middlewares/error-handler";
+import usersRouter from "@/routes/users.router.js";
+import authRouter from "@/routes/authentication.router.js";
+import restaurantsRouter from "@/routes/restaurants.router.js";
+import errorHandler from "@/middlewares/error-handler.js";
+import configuration from "@/lib/configuration.js";
 
 export const createServer = (): Express => {
   const app = express();
   app
     .use(
       cors({
-        origin: ["http://localhost:5173", "http://localhost:4173"],
+        origin: [configuration.cookies.domain!],
         credentials: true,
       }),
     )

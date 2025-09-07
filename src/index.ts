@@ -1,19 +1,24 @@
 import "reflect-metadata";
 import { Express } from "express";
-import { createServer } from "@/server";
-import configuration from "@/config/configuration";
-import { AppDataSource } from "@/data-source";
-import logger from "@/config/logger";
+import { createServer } from "@/server.js";
+import configuration from "@/lib/configuration.js";
+import { AppDataSource } from "@/data-source.js";
+import logger from "@/lib/logger.js";
 
-const port = configuration.port ? parseInt(configuration.port) : 5000;
-const host = configuration.host ?? "localhost";
+const port = configuration.port;
+const host = configuration.host;
 const server: Express = createServer();
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-server.listen(port, host, async () => {
+server.listen(port, host, () => {
   try {
-    await AppDataSource.initialize();
-    logger.info(`Server Listening on  http://${host}:${port}`);
+    AppDataSource.initialize()
+      .then(() => {
+        logger.info(`Server Listening on  http://${host}:${port}`);
+      })
+      .catch((err) => {
+        logger.error("Error during Data Source initialization", err);
+        throw err;
+      });
   } catch (error: unknown) {
     console.error(error);
     process.exit(1);

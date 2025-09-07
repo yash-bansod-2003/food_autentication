@@ -1,12 +1,12 @@
 import { Router, RequestHandler } from "express";
-import RestaurantsController from "@/controllers/restaurants.controller";
-import RestaurantsService from "@/services/restaurants.service";
-import { AppDataSource } from "@/data-source";
-import { Restaurant } from "@/models/Restaurant";
-import authenticate from "@/middlewares/authenticate";
-import authorization from "@/middlewares/authorization";
-import logger from "@/config/logger";
-import { ROLES } from "@/lib/constants";
+import RestaurantsController from "@/controllers/restaurants.controller.js";
+import RestaurantsService from "@/services/restaurants.service.js";
+import { AppDataSource } from "@/data-source.js";
+import { Restaurant } from "@/models/restaurant.js";
+import authenticate from "@/middlewares/authenticate.js";
+import authorization from "@/middlewares/authorization.js";
+import logger from "@/lib/logger.js";
+import { ROLES } from "@/lib/constants.js";
 
 const router = Router();
 
@@ -16,7 +16,7 @@ const restaurantsController = new RestaurantsController(
   restaurantsService,
   logger,
 );
-import { restaurantCreateValidator } from "@/validators/restaurants.validator";
+import { restaurantCreateValidator } from "@/validators/restaurants.validator.js";
 
 router.post(
   "/",

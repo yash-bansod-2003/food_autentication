@@ -1,11 +1,11 @@
 import { expressjwt } from "express-jwt";
-import configuration from "@/config/configuration";
-import { Request } from "express";
-import { AppDataSource } from "@/data-source";
-import { RefreshToken } from "@/models/RefreshToken";
-import logger from "@/config/logger";
+import configuration from "@/lib/configuration.js";
+import { Request, RequestHandler } from "express";
+import { AppDataSource } from "@/data-source.js";
+import { RefreshToken } from "@/models/refreshToken.js";
+import logger from "@/lib/logger.js";
 
-export default expressjwt({
+const authenticateRefresh: RequestHandler = expressjwt({
   secret: String(configuration.jwt_secrets.refresh),
   algorithms: ["HS256"],
   getToken(req: Request) {
@@ -31,3 +31,5 @@ export default expressjwt({
     return true;
   },
 });
+
+export default authenticateRefresh;
