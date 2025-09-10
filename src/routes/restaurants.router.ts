@@ -2,7 +2,7 @@ import { Router, RequestHandler } from "express";
 import RestaurantsController from "@/controllers/restaurants.controller.js";
 import RestaurantsService from "@/services/restaurants.service.js";
 import { AppDataSource } from "@/data-source.js";
-import { Restaurant } from "@/models/restaurant.js";
+import { Restaurant } from "@/entities/restaurant.js";
 import authenticate from "@/middlewares/authenticate.js";
 import authorization from "@/middlewares/authorization.js";
 import logger from "@/lib/logger.js";

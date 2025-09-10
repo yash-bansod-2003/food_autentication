@@ -2,7 +2,7 @@ import { expressjwt } from "express-jwt";
 import configuration from "@/lib/configuration.js";
 import { Request, RequestHandler } from "express";
 import { AppDataSource } from "@/data-source.js";
-import { RefreshToken } from "@/models/refreshToken.js";
+import { RefreshToken } from "@/entities/refreshToken.js";
 import logger from "@/lib/logger.js";
 
 const authenticateRefresh: RequestHandler = expressjwt({

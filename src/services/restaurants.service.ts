@@ -1,4 +1,4 @@
-import { Restaurant } from "@/models/restaurant.js";
+import { Restaurant } from "@/entities/restaurant.js";
 import {
   DeepPartial,
   DeleteResult,

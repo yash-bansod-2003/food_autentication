@@ -7,8 +7,8 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
 } from "typeorm";
-import { Restaurant } from "@/models/restaurant.js";
-import { RefreshToken } from "@/models/refreshToken.js";
+import { Restaurant } from "@/entities/restaurant.js";
+import { RefreshToken } from "@/entities/refreshToken.js";
 import { ROLES } from "@/lib/constants.js";
 
 @Entity("users")

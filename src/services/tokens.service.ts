@@ -1,4 +1,4 @@
-import { RefreshToken } from "@/models/refreshToken.js";
+import { RefreshToken } from "@/entities/refreshToken.js";
 import JsonWebToken from "jsonwebtoken";
 import {
   DeepPartial,

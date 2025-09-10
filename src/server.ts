@@ -14,7 +14,7 @@ export const createServer = (): Express => {
   app
     .use(
       cors({
-        origin: [configuration.cookies.domain!],
+        origin: [configuration.cookies.domain],
         credentials: true,
       }),
     )

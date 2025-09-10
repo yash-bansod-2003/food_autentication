@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import { Router } from "express";
 import { AppDataSource } from "@/data-source.js";
-import { User } from "@/models/user.js";
-import { RefreshToken } from "@/models/refreshToken.js";
+import { User } from "@/entities/user.js";
+import { RefreshToken } from "@/entities/refreshToken.js";
 import logger from "@/lib/logger.js";
 import configuration from "@/lib/configuration.js";
 import AutenticationController from "@/controllers/authentication.controller.js";
