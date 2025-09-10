@@ -1,4 +1,4 @@
-import { Restaurant } from "@/entities/restaurant.js";
+import { Restaurant } from "@/entities/restaurant";
 import {
   DeepPartial,
   DeleteResult,
@@ -9,7 +9,7 @@ import {
   SaveOptions,
   UpdateResult,
 } from "typeorm";
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity.js";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 class UserService {
   constructor(private readonly restaurantsRepository: Repository<Restaurant>) {}

@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { HttpError } from "http-errors";
 import { ZodError } from "zod";
 import Jsonwebtoken from "jsonwebtoken";
-import zodErrorAdapter from "@/adapters/error/zod.adapter.js";
-import httpErrorAdapter from "@/adapters/error/http-error.adapter.js";
-import configuration from "@/lib/configuration.js";
+import zodErrorAdapter from "@/adapters/error/zod.adapter";
+import httpErrorAdapter from "@/adapters/error/http-error.adapter";
+import configuration from "@/lib/configuration";
 import { UnauthorizedError } from "express-jwt";
 
 export interface ErrorResponse {

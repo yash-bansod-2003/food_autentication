@@ -1,9 +1,9 @@
 import { Request } from "express";
 import { expressjwt } from "express-jwt";
-import configuration from "@/lib/configuration.js";
-import { AppDataSource } from "@/data-source.js";
-import { RefreshToken } from "@/entities/refreshToken.js";
-import logger from "@/lib/logger.js";
+import configuration from "@/lib/configuration";
+import { AppDataSource } from "@/data-source";
+import { RefreshToken } from "@/entities/refreshToken";
+import logger from "@/lib/logger";
 
 export default expressjwt({
   secret: String(configuration.jwt_secrets.refresh),

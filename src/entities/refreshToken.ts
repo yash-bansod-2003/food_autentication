@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { User } from "./user.js";
+import { User } from "./user";
 
 @Entity("refresh-tokens")
 export class RefreshToken {

@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import JsonWebToken from "jsonwebtoken";
-import UserService from "@/services/users.service.js";
-import TokensService from "@/services/tokens.service.js";
-import { User } from "@/types/index.js";
-import { AuthenticatedRequest } from "@/middlewares/authenticate.js";
+import UserService from "@/services/users.service";
+import TokensService from "@/services/tokens.service";
+import { User } from "@/types/index";
+import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
 import createError from "http-errors";
-import HashingService from "@/services/hashing.service.js";
+import HashingService from "@/services/hashing.service";
 
 class AutenticationController {
   constructor(

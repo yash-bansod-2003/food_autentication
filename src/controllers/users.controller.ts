@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
-import UserService from "@/services/users.service.js";
-import RestaurantsService from "@/services/restaurants.service.js";
-import { User } from "@/types/index.js";
+import UserService from "@/services/users.service";
+import RestaurantsService from "@/services/restaurants.service";
+import { User } from "@/types/index";
 
 class UsersController {
   constructor(

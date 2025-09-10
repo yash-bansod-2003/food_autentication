@@ -1,9 +1,9 @@
 import { expressjwt } from "express-jwt";
-import configuration from "@/lib/configuration.js";
+import configuration from "@/lib/configuration";
 import { Request, RequestHandler } from "express";
-import { AppDataSource } from "@/data-source.js";
-import { RefreshToken } from "@/entities/refreshToken.js";
-import logger from "@/lib/logger.js";
+import { AppDataSource } from "@/data-source";
+import { RefreshToken } from "@/entities/refreshToken";
+import logger from "@/lib/logger";
 
 const authenticateRefresh: RequestHandler = expressjwt({
   secret: String(configuration.jwt_secrets.refresh),

@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import { Express } from "express";
-import { createServer } from "@/server.js";
-import configuration from "@/lib/configuration.js";
-import { AppDataSource } from "@/data-source.js";
-import logger from "@/lib/logger.js";
+import { createServer } from "@/server";
+import configuration from "@/lib/configuration";
+import { AppDataSource } from "@/data-source";
+import logger from "@/lib/logger";
 
 const port = configuration.port;
 const host = configuration.host;

@@ -1,5 +1,5 @@
-import { RefreshToken } from "@/entities/refreshToken.js";
 import JsonWebToken from "jsonwebtoken";
+import { RefreshToken } from "@/entities/refreshToken";
 import {
   DeepPartial,
   DeleteResult,

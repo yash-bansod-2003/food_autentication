@@ -1,17 +1,17 @@
 import fs from "node:fs";
 import { Router } from "express";
-import { AppDataSource } from "@/data-source.js";
-import { User } from "@/entities/user.js";
-import { RefreshToken } from "@/entities/refreshToken.js";
-import logger from "@/lib/logger.js";
-import configuration from "@/lib/configuration.js";
-import AutenticationController from "@/controllers/authentication.controller.js";
-import UsersService from "@/services/users.service.js";
-import TokensService from "@/services/tokens.service.js";
-import HashingService from "@/services/hashing.service.js";
-import authenticationMiddleware from "@/middlewares/authenticate.js";
-import authenticationRefreshTokenMiddleware from "@/middlewares/authenticate-refreshToken.js";
-import { userCreateValidator } from "@/validators/users.validators.js";
+import { AppDataSource } from "@/data-source";
+import { User } from "@/entities/user";
+import { RefreshToken } from "@/entities/refreshToken";
+import logger from "@/lib/logger";
+import configuration from "@/lib/configuration";
+import AutenticationController from "@/controllers/authentication.controller";
+import UsersService from "@/services/users.service";
+import TokensService from "@/services/tokens.service";
+import HashingService from "@/services/hashing.service";
+import authenticationMiddleware from "@/middlewares/authenticate";
+import authenticationRefreshTokenMiddleware from "@/middlewares/authenticate-refreshToken";
+import { userCreateValidator } from "@/validators/users.validators";
 
 const router = Router();
 

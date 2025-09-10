@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import RestaurantsService from "@/services/restaurants.service.js";
-import { Restaurant } from "@/types/index.js";
+import RestaurantsService from "@/services/restaurants.service";
+import { Restaurant } from "@/types/index";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
 

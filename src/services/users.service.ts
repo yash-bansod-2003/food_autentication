@@ -1,4 +1,3 @@
-import { User } from "@/entities/user.js";
 import {
   DeepPartial,
   DeleteResult,
@@ -9,7 +8,8 @@ import {
   SaveOptions,
   UpdateResult,
 } from "typeorm";
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity.js";
+import { User } from "@/entities/user";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 class UsersService {
   constructor(private readonly usersRepository: Repository<User>) {}

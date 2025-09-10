@@ -1,7 +1,7 @@
 import { Request, RequestHandler } from "express";
 import jwksClient from "jwks-rsa";
 import { expressjwt, GetVerificationKey } from "express-jwt";
-import configuration from "@/lib/configuration.js";
+import configuration from "@/lib/configuration";
 
 const authenticate: RequestHandler = expressjwt({
   secret: jwksClient.expressJwtSecret({
