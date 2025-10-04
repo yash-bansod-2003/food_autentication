@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpError } from "http-errors";
 import { ZodError } from "zod";
-import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import Jsonwebtoken from "jsonwebtoken";
 import zodErrorAdapter from "@/adapters/error/zod.adapter";
 import httpErrorAdapter from "@/adapters/error/http-error.adapter";
-import configuration from "@/config/configuration";
+import configuration from "@/lib/configuration";
 import { UnauthorizedError } from "express-jwt";
 
 export interface ErrorResponse {
@@ -15,7 +15,7 @@ export interface ErrorResponse {
 }
 
 const errorHandler = (
-  err: Error | HttpError | ZodError | TokenExpiredError,
+  err: Error | ZodError | Jsonwebtoken.TokenExpiredError | HttpError,
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,7 +42,7 @@ const errorHandler = (
     errorResponse = httpErrorAdapter(err);
   }
 
-  if (err instanceof TokenExpiredError) {
+  if (err instanceof Jsonwebtoken.TokenExpiredError) {
     errorResponse = {
       name: err.name,
       code: 401,
@@ -55,7 +55,7 @@ const errorHandler = (
     };
   }
 
-  if (err instanceof JsonWebTokenError) {
+  if (err instanceof Jsonwebtoken.JsonWebTokenError) {
     errorResponse = {
       name: err.name,
       code: 401,

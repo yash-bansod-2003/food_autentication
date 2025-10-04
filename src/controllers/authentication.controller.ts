@@ -2,13 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import JsonWebToken from "jsonwebtoken";
 import UserService from "@/services/users.service";
 import TokensService from "@/services/tokens.service";
-import { CreateUserDto, LoginUserDto } from "@/dto/users";
-import { ForgotPasswordDto, ResetPasswordDto } from "@/dto/autentication";
+import { User } from "@/types/index";
 import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
 import createError from "http-errors";
 import HashingService from "@/services/hashing.service";
-import configuration from "@/config/configuration";
 
 class AutenticationController {
   constructor(
@@ -22,7 +20,7 @@ class AutenticationController {
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, ...rest } = req.body as CreateUserDto;
+      const { email, password, ...rest } = req.body as User;
       this.logger.debug(`initiate registering user ${email}`);
       const userExists = await this.userService.findOne({ where: { email } });
       if (userExists) {
@@ -50,7 +48,7 @@ class AutenticationController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body as LoginUserDto;
+      const { email, password } = req.body as Pick<User, "email" | "password">;
       this.logger.debug(`Attempting login for user with email: ${email}`);
       const user = await this.userService.findOne({
         where: { email },
@@ -104,7 +102,6 @@ class AutenticationController {
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        domain: configuration.cookies.domain,
         sameSite: "strict",
         maxAge: 1000 * 60 * 60,
         secure: false,
@@ -112,7 +109,6 @@ class AutenticationController {
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        domain: configuration.cookies.domain,
         sameSite: "strict",
         maxAge: 1000 * 60 * 60 * 24 * 365,
         secure: false,
@@ -148,7 +144,12 @@ class AutenticationController {
 
   async forgot(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email } = req.body as ForgotPasswordDto;
+      const { email } = req.body as { email: string };
+
+      if (!email) {
+        throw createError(400, "email is required");
+      }
+
       this.logger.debug(`Initiating forgot password for email: ${email}`);
       const user = await this.userService.findOne({ where: { email } });
       this.logger.debug(`User not found for email: ${email}`);
@@ -176,6 +177,9 @@ class AutenticationController {
     try {
       this.logger.debug(`Attempting password reset with token`);
       const { token } = req.params;
+      if (!token) {
+        throw createError(400, "token is required");
+      }
       const match = this.forgotTokensService.verify(token);
       this.logger.debug(`Invalid token for password reset`);
       if (!match) {
@@ -193,7 +197,12 @@ class AutenticationController {
         throw createError(404, "user not found");
       }
 
-      const { password } = req.body as ResetPasswordDto;
+      const { password } = req.body as { password: string };
+
+      if (!password) {
+        throw createError(400, "password is required");
+      }
+
       const user = await this.userService.update(
         { email: email as string },
         {
@@ -291,7 +300,6 @@ class AutenticationController {
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        domain: configuration.cookies.domain,
         sameSite: "strict",
         maxAge: 1000 * 60 * 60,
         secure: false,
@@ -299,7 +307,6 @@ class AutenticationController {
 
       res.cookie("refreshToken", refreshTokenNew, {
         httpOnly: true,
-        domain: configuration.cookies.domain,
         sameSite: "strict",
         maxAge: 1000 * 60 * 60 * 24 * 365,
         secure: false,

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import RestaurantsService from "@/services/restaurants.service";
-import { CreateRestaurantDto, UpdateRestaurantDto } from "@/dto/restaurants";
+import { Restaurant } from "@/types/index";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
 
@@ -11,13 +11,12 @@ class RestaurantsController {
   ) {}
 
   async create(req: Request, res: Response, next: NextFunction) {
+    const restaurantData = req.body as Restaurant;
     try {
       this.logger.info(
-        `Creating restaurant with data: ${JSON.stringify(req.body)}`,
+        `Creating restaurant with data: ${JSON.stringify(restaurantData)}`,
       );
-      const restaurant = await this.restaurantsService.create(
-        req.body as CreateRestaurantDto,
-      );
+      const restaurant = await this.restaurantsService.create(restaurantData);
       this.logger.info(`Restaurant created with id: ${restaurant.id}`);
       res.json(restaurant);
     } catch (error: unknown) {
@@ -69,15 +68,16 @@ class RestaurantsController {
   }
 
   async update(req: Request, res: Response, next: NextFunction) {
+    const restaurantData = req.body as Restaurant;
     try {
       this.logger.info(
         `Updating restaurant with id: ${req.params.id} with data: ${JSON.stringify(
-          req.body,
+          restaurantData,
         )}`,
       );
       const restaurant = await this.restaurantsService.update(
         { id: Number(req.params.id) },
-        req.body as UpdateRestaurantDto,
+        restaurantData,
       );
       this.logger.info(`Restaurant with id: ${req.params.id} updated`);
       res.json(restaurant);

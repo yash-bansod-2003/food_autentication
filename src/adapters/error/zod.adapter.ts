@@ -5,10 +5,12 @@ const zodErrorAdapter = (error: ZodError): ErrorResponse => {
   return {
     name: "Validation Error",
     code: 400,
-    errors: error.errors.map((err) => ({
-      message: err.message,
-      path: err.path.join(","),
-    })),
+    errors: error.issues.map((issue) => {
+      return {
+        message: issue.message,
+        path: issue.path.join(","),
+      };
+    }),
   };
 };
 

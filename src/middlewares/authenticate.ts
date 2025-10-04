@@ -1,9 +1,9 @@
-import { Request } from "express";
+import { Request, RequestHandler } from "express";
 import jwksClient from "jwks-rsa";
 import { expressjwt, GetVerificationKey } from "express-jwt";
-import configuration from "@/config/configuration";
+import configuration from "@/lib/configuration";
 
-export default expressjwt({
+const authenticate: RequestHandler = expressjwt({
   secret: jwksClient.expressJwtSecret({
     jwksUri: String(configuration.jwks_uri),
     cache: true,
@@ -27,6 +27,8 @@ export default expressjwt({
     return token;
   },
 });
+
+export default authenticate;
 
 export interface AuthenticatedRequest extends Request {
   auth: {

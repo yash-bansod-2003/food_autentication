@@ -3,11 +3,11 @@ import UsersController from "@/controllers/users.controller";
 import UsersService from "@/services/users.service";
 import RestaurantsService from "@/services/restaurants.service";
 import { AppDataSource } from "@/data-source";
-import { User } from "@/models/User";
-import { Restaurant } from "@/models/Restaurant";
+import { User } from "@/entities/user";
+import { Restaurant } from "@/entities/restaurant";
 import authenticate from "@/middlewares/authenticate";
 import authorization from "@/middlewares/authorization";
-import logger from "@/config/logger";
+import logger from "@/lib/logger";
 import { ROLES } from "@/lib/constants";
 import { userCreateValidator } from "@/validators/users.validators";
 

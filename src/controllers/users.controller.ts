@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import UserService from "@/services/users.service";
-import RestaurantsService from "@/services/restaurants.service";
-import { CreateUserDto, UpdateUserDto } from "@/dto/users";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
+import UserService from "@/services/users.service";
+import RestaurantsService from "@/services/restaurants.service";
+import { User } from "@/types/index";
 
 class UsersController {
   constructor(
@@ -14,7 +14,8 @@ class UsersController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     this.logger.info(`Creating user with data: ${JSON.stringify(req.body)}`);
-    const { restaurantId, ...rest } = req.body as CreateUserDto;
+    const { restaurantId, ...rest } = req.body as User;
+
     const restaurant = await this.restaurantsService.findOne({
       where: { id: restaurantId },
     });
@@ -49,6 +50,9 @@ class UsersController {
       const [users, total] = await this.userService.findAll({
         skip,
         take: limit,
+        select: {
+          password: false,
+        },
       });
 
       this.logger.info(`Fetched ${users.length} users`);
@@ -66,6 +70,9 @@ class UsersController {
     try {
       const user = await this.userService.findOne({
         where: { id: Number(req.params.id) },
+        select: {
+          password: false,
+        },
       });
       if (!user) {
         this.logger.error(`User with id: ${req.params.id} not found`);
@@ -85,7 +92,7 @@ class UsersController {
     this.logger.info(
       `Updating user with id: ${req.params.id} with data: ${JSON.stringify(req.body)}`,
     );
-    const { restaurantId, ...rest } = req.body as UpdateUserDto;
+    const { restaurantId, ...rest } = req.body as User;
     const restaurant = await this.restaurantsService.findOne({
       where: { id: restaurantId },
     });

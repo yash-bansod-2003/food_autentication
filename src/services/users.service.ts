@@ -1,4 +1,3 @@
-import { User } from "@/models/User";
 import {
   DeepPartial,
   DeleteResult,
@@ -9,6 +8,7 @@ import {
   SaveOptions,
   UpdateResult,
 } from "typeorm";
+import { User } from "@/entities/user";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 class UsersService {

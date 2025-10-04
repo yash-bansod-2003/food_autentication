@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import path from "node:path";
 import express, { ErrorRequestHandler, Express } from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -7,13 +8,14 @@ import usersRouter from "@/routes/users.router";
 import authRouter from "@/routes/authentication.router";
 import restaurantsRouter from "@/routes/restaurants.router";
 import errorHandler from "@/middlewares/error-handler";
+import configuration from "@/lib/configuration";
 
 export const createServer = (): Express => {
   const app = express();
   app
     .use(
       cors({
-        origin: ["http://localhost:5173", "http://localhost:4173"],
+        origin: [configuration.cookies.domain],
         credentials: true,
       }),
     )
@@ -21,7 +23,7 @@ export const createServer = (): Express => {
     .use(express.urlencoded({ extended: true }))
     .use(morgan("dev"))
     .use(cookieParser())
-    .use(express.static("public"))
+    .use(express.static(path.join(__dirname, "..", "public")))
     .get("/status", (_, res) => {
       res.json({ ok: true });
     })
