@@ -28,8 +28,8 @@ export const userCreateValidator = (
   next: NextFunction,
 ) => {
   try {
+    console.log(req.body);
     userValidationSchema.parse(req.body);
-    userQueryValidationSchema.parse(req.query);
     next();
     return;
   } catch (error) {

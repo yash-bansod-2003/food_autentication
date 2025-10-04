@@ -14,6 +14,7 @@ const configuration = {
   },
   jwks_uri: process.env.JWKS_URI,
   jwt_secrets: {
+    privateKay: process.env.JWT_SECRETS_PRIVATE_KEY,
     refresh: process.env.JWT_SECRETS_REFRESH,
     forgot: process.env.JWT_SECRETS_FORGOT,
   },

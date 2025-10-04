@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import path from "node:path";
 import express, { ErrorRequestHandler, Express } from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -22,7 +23,7 @@ export const createServer = (): Express => {
     .use(express.urlencoded({ extended: true }))
     .use(morgan("dev"))
     .use(cookieParser())
-    .use(express.static("public"))
+    .use(express.static(path.join(__dirname, "..", "public")))
     .get("/status", (_, res) => {
       res.json({ ok: true });
     })

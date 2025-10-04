@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
-class UserService {
+class RestaurantsService {
   constructor(private readonly restaurantsRepository: Repository<Restaurant>) {}
   async create(
     createRestaurantDto: DeepPartial<Restaurant>,
@@ -42,4 +42,4 @@ class UserService {
   }
 }
 
-export default UserService;
+export default RestaurantsService;

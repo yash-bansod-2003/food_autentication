@@ -17,10 +17,10 @@ describe("server", () => {
   describe("get /message/:name", () => {
     it("should endpoint says hello", async () => {
       await supertest(createServer() as unknown as App)
-        .get("/message/john")
+        .get("/message/yash")
         .expect(200)
         .then((res) => {
-          expect(res.body).toEqual({ message: "hello john" });
+          expect(res.body).toEqual({ message: "hello yash" });
         });
     });
   });

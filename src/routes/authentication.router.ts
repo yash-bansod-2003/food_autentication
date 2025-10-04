@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import { Router } from "express";
 import { AppDataSource } from "@/data-source";
 import { User } from "@/entities/user";
@@ -16,17 +15,12 @@ import { userCreateValidator } from "@/validators/users.validators";
 const router = Router();
 
 const usersRepository = AppDataSource.getRepository(User);
-let privateKey: Buffer | string;
-try {
-  privateKey = fs.readFileSync("certificates/private.pem");
-} catch (error) {
-  privateKey = "";
-  logger.error(error);
-}
 
 const hashingService = new HashingService();
 
-const accessTokensService = new TokensService(privateKey);
+const accessTokensService = new TokensService(
+  configuration.jwt_secrets.privateKay,
+);
 
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 

@@ -3,8 +3,6 @@ import { DataSource } from "typeorm";
 import configuration from "./lib/configuration";
 import path from "node:path";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: configuration.database.host,

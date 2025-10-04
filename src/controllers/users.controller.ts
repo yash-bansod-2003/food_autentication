@@ -50,6 +50,9 @@ class UsersController {
       const [users, total] = await this.userService.findAll({
         skip,
         take: limit,
+        select: {
+          password: false,
+        },
       });
 
       this.logger.info(`Fetched ${users.length} users`);
@@ -67,6 +70,9 @@ class UsersController {
     try {
       const user = await this.userService.findOne({
         where: { id: Number(req.params.id) },
+        select: {
+          password: false,
+        },
       });
       if (!user) {
         this.logger.error(`User with id: ${req.params.id} not found`);
