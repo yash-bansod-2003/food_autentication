@@ -4,3 +4,13 @@ import { restaurantValidationSchema } from "@/validators/restaurants.validator";
 
 export type User = z.infer<typeof userValidationSchema>;
 export type Restaurant = z.infer<typeof restaurantValidationSchema>;
+
+export interface ResponseWithMetadata<T> {
+  meta?: {
+    total: number;
+    page: number;
+    per_page: number;
+  };
+  data: T;
+  success?: boolean;
+}

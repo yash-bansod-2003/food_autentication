@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: food-auth-backend-deployment
+  namespace: food
+  labels:
+    app: food-auth-backend
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: food-auth-backend
+  template:
+    metadata:
+      labels:
+        app: food-auth-backend
+    spec:
+      containers:
+        - name: food-auth-backend
+          image: yashbansod2003/food_autentication:latest
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: food-auth-backend-config-map
+                  key: DOMAIN
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: DATABASE_HOST
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: DATABASE_PORT
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: DATABASE_USER
+            - name: DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: DATABASE
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: DATABASE_PASSWORD
+            - name: JWT_ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: JWT_ACCESS_TOKEN_SECRET
+            - name: JWT_REFRESH_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: JWT_REFRESH_TOKEN_SECRET
+            - name: JWT_FORGOT_PASSWORD_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: JWT_FORGOT_PASSWORD_TOKEN_SECRET
+            - name: SMTP_SERVICE
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: SMTP_SERVICE
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: SMTP_USERNAME
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: food-auth-backend-secret
+                  key: SMTP_PASSWORD

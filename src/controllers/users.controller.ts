@@ -3,7 +3,8 @@ import { Logger } from "winston";
 import createHttpError from "http-errors";
 import UserService from "@/services/users.service";
 import RestaurantsService from "@/services/restaurants.service";
-import { User } from "@/types/index";
+import { User, ResponseWithMetadata } from "@/types/index";
+import {} from "@/validators/users.validators";
 
 class UsersController {
   constructor(
@@ -32,7 +33,11 @@ class UsersController {
         restaurant,
       });
       this.logger.info(`User created with id: ${user.id}`);
-      res.json(user);
+      const response: ResponseWithMetadata<User> = {
+        data: user,
+        success: true,
+      };
+      res.json(response);
       return;
     } catch (error) {
       this.logger.error(`Error creating user: ${(error as Error).message}`);
@@ -55,8 +60,18 @@ class UsersController {
         },
       });
 
+      const response: ResponseWithMetadata<User[]> = {
+        meta: {
+          page,
+          per_page: limit,
+          total,
+        },
+        data: users,
+        success: true,
+      };
+
       this.logger.info(`Fetched ${users.length} users`);
-      return res.json({ page, limit, total, data: users });
+      return res.json(response);
     } catch (error) {
       this.logger.error(
         `Error fetching all users: ${(error as Error).message}`,
@@ -78,8 +93,12 @@ class UsersController {
         this.logger.error(`User with id: ${req.params.id} not found`);
         return next(createHttpError(404, "user not found"));
       }
+      const response: ResponseWithMetadata<User> = {
+        data: user,
+        success: true,
+      };
       this.logger.info(`Fetched user with id: ${user.id}`);
-      res.json(user);
+      res.json(response);
     } catch (error) {
       this.logger.error(
         `Error fetching user with id: ${req.params.id}: ${(error as Error).message}`,
@@ -103,7 +122,7 @@ class UsersController {
     }
 
     try {
-      const user = await this.userService.update(
+      await this.userService.update(
         {
           id: Number(req.params.id),
         },
@@ -113,7 +132,26 @@ class UsersController {
         },
       );
       this.logger.info(`User with id: ${req.params.id} updated`);
-      res.json(user);
+
+      const updatedUser = await this.userService.findOne({
+        where: { id: Number(req.params.id) },
+        select: {
+          password: false,
+        },
+      });
+
+      if (!updatedUser) {
+        this.logger.error(
+          `User with id: ${req.params.id} not found after update`,
+        );
+        return next(createHttpError(500, "internal server error"));
+      }
+
+      const response: ResponseWithMetadata<typeof updatedUser> = {
+        data: updatedUser,
+        success: true,
+      };
+      res.json(response);
     } catch (error) {
       this.logger.error(
         `Error updating user with id: ${req.params.id}: ${(error as Error).message}`,
@@ -125,9 +163,17 @@ class UsersController {
   async delete(req: Request, res: Response, next: NextFunction) {
     this.logger.info(`Deleting user with id: ${req.params.id}`);
     try {
-      const user = await this.userService.delete({ id: Number(req.params.id) });
+      const result = await this.userService.delete({
+        id: Number(req.params.id),
+      });
       this.logger.info(`User with id: ${req.params.id} deleted`);
-      return res.json(user);
+      const response: ResponseWithMetadata<{
+        affected: number | null | undefined;
+      }> = {
+        data: { affected: result.affected },
+        success: true,
+      };
+      return res.json(response);
     } catch (error) {
       this.logger.error(
         `Error deleting user with id: ${req.params.id}: ${(error as Error).message}`,

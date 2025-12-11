@@ -1,5 +1,5 @@
 # Use the official Node.js image as our base
-FROM node:24
+FROM node:22-alpine
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
@@ -8,13 +8,13 @@ WORKDIR /usr/src/app
 COPY package.json ./
 
 # Install app dependencies [it runs while building the image]
-RUN npm install --ignore-scripts
+RUN npm install
 
 # Copy the rest of our app's source code into the container
 COPY . .
 
 # Expose the port the app will run on
-EXPOSE 80
+EXPOSE 5001
 
 # The command to run our app [it runs when we run the container]
 CMD ["npm","run", "dev"]

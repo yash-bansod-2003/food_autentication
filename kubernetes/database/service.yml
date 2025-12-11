@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: food-auth-database-service
+  namespace: food
+
+spec:
+  clusterIP: None
+  selector:
+    app: food-auth-database
+  ports:
+    - name: food-auth-database
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

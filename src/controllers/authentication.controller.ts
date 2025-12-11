@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import JsonWebToken from "jsonwebtoken";
 import UserService from "@/services/users.service";
 import TokensService from "@/services/tokens.service";
-import { User } from "@/types/index";
+import { User, ResponseWithMetadata } from "@/types/index";
 import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
 import createError from "http-errors";
@@ -38,7 +38,12 @@ class AutenticationController {
         ...rest,
       });
       this.logger.debug("user registered successfully");
-      res.json({ ...user, password: undefined });
+      user.password = undefined;
+      const response: ResponseWithMetadata<typeof user> = {
+        data: user,
+        success: true,
+      };
+      res.json(response);
       return;
     } catch (error) {
       next(error);
@@ -114,7 +119,11 @@ class AutenticationController {
         secure: false,
       });
 
-      res.json({ id: user.id });
+      const response: ResponseWithMetadata<{ id: number }> = {
+        data: { id: user.id },
+        success: true,
+      };
+      res.json(response);
       return;
     } catch (error) {
       this.logger.error(`Error during login: ${(error as Error).message}`);
@@ -135,7 +144,12 @@ class AutenticationController {
         this.logger.debug(`Profile fetched for user id: ${id}`);
         throw createError(404, "user not found");
       }
-      return res.json({ ...user, password: undefined });
+      user.password = undefined;
+      const response: ResponseWithMetadata<typeof user> = {
+        data: user,
+        success: true,
+      };
+      return res.json(response);
     } catch (error) {
       this.logger.error(`Error fetching profile: ${(error as Error).message}`);
       next(error);
@@ -164,7 +178,11 @@ class AutenticationController {
       this.logger.debug(`Forgot password token generated for email: ${email}`);
       const token = this.forgotTokensService.sign(payload);
 
-      return res.json({ token });
+      const response: ResponseWithMetadata<{ token: string }> = {
+        data: { token },
+        success: true,
+      };
+      return res.json(response);
     } catch (error) {
       this.logger.error(
         `Error during forgot password: ${(error as Error).message}`,
@@ -216,7 +234,21 @@ class AutenticationController {
       }
       this.logger.debug(`Password reset successful for email: ${email}`);
 
-      return res.json(user);
+      const updatedUser = await this.userService.findOne({
+        where: { email: email as string },
+      });
+
+      if (!updatedUser) {
+        throw createError(500, "internal server error");
+      }
+
+      updatedUser.password = undefined;
+
+      const response: ResponseWithMetadata<typeof updatedUser> = {
+        data: updatedUser,
+        success: true,
+      };
+      return res.json(response);
     } catch (error) {
       this.logger.error(
         `Error during password reset: ${(error as Error).message}`,
@@ -313,7 +345,11 @@ class AutenticationController {
       });
 
       this.logger.debug("token refreshed successfully");
-      return res.json({ status: "success" });
+      const response: ResponseWithMetadata<{ status: string }> = {
+        data: { status: "success" },
+        success: true,
+      };
+      return res.json(response);
     } catch (error) {
       this.logger.debug(error);
       return next(error);
@@ -343,7 +379,11 @@ class AutenticationController {
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
 
-      return res.json({ id: user.id });
+      const response: ResponseWithMetadata<{ id: number }> = {
+        data: { id: user.id },
+        success: true,
+      };
+      return res.json(response);
     } catch (error) {
       this.logger.error("logout user failed", error);
       next(createError.InternalServerError());

@@ -5,6 +5,11 @@ export const restaurantValidationSchema = z.object({
   name: z.string(),
 });
 
+export const restaurantQueryValidationSchema = z.object({
+  page: z.number().optional(),
+  per_page: z.number().optional(),
+});
+
 export const restaurantCreateValidator = (
   req: Request,
   res: Response,
@@ -12,6 +17,7 @@ export const restaurantCreateValidator = (
 ) => {
   try {
     restaurantValidationSchema.parse(req.body);
+    restaurantQueryValidationSchema.parse(req.query);
     return next();
   } catch (error) {
     return next(error);
