@@ -4,7 +4,6 @@ import createHttpError from "http-errors";
 import UserService from "@/services/users.service";
 import RestaurantsService from "@/services/restaurants.service";
 import { User, ResponseWithMetadata } from "@/types/index";
-import {} from "@/validators/users.validators";
 
 class UsersController {
   constructor(
