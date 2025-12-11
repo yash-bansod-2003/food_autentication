@@ -68,7 +68,10 @@ jobs:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_TOKEN }}
       - name: Build and push
-        run: docker build -t ${{ env.DOCKERIMAGE_NAME }}:${{ env.DOCKERIMAGE_TAG }} --platform linux/amd64 -f docker/production/Dockerfile .
-        run: docker build -t ${{ env.DOCKERIMAGE_NAME }}:latest --platform linux/amd64 -f docker/production/Dockerfile .
+        run: |
+          docker build -t ${{ env.DOCKERIMAGE_NAME }}:${{ env.DOCKERIMAGE_TAG }} --platform linux/amd64 -f docker/production/Dockerfile .
+          docker build -t ${{ env.DOCKERIMAGE_NAME }}:latest --platform linux/amd64 -f docker/production/Dockerfile .
       - name: Push to DockerHub
-        run: docker push ${{ env.DOCKERIMAGE_NAME }}:${{ env.DOCKERIMAGE_TAG }}
+        run: |
+          docker push ${{ env.DOCKERIMAGE_NAME }}:${{ env.DOCKERIMAGE_TAG }}
+          docker push ${{ env.DOCKERIMAGE_NAME }}:latest
