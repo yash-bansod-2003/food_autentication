@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: food-auth-backend-config-map
+  namespace: food
+data:
+  DOMAIN: "http://localhost:3000"

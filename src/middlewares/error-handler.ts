@@ -10,6 +10,7 @@ import { UnauthorizedError } from "express-jwt";
 export interface ErrorResponse {
   name: string;
   code: number;
+  success: boolean;
   errors: unknown[];
   stack?: string;
 }
@@ -26,6 +27,7 @@ const errorHandler = (
   errorResponse = {
     name: "Internal Server Error",
     code: 500,
+    success: false,
     errors: [
       {
         message: "Internal Server Error",
@@ -46,6 +48,7 @@ const errorHandler = (
     errorResponse = {
       name: err.name,
       code: 401,
+      success: false,
       errors: [
         {
           message: err.message,
@@ -59,6 +62,7 @@ const errorHandler = (
     errorResponse = {
       name: err.name,
       code: 401,
+      success: false,
       errors: [
         {
           message: err.message,
@@ -72,6 +76,7 @@ const errorHandler = (
     errorResponse = {
       name: err.name,
       code: 401,
+      success: false,
       errors: [
         {
           message: err.message,

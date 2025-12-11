@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: food-auth-database-deployment
+  namespace: food
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: food-auth-database
+  template:
+    metadata:
+      labels:
+        app: food-auth-database
+    spec:
+      containers:
+        - name: food-auth-database
+          image: postgres:17.2
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: food-auth-database-config-map
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: food-auth-database-config-map
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: food-auth-database-config-map
+                  key: POSTGRES_DB
+      volumes:
+        - name: food-auth-database-pv
+          persistentVolumeClaim:
+            claimName: food-auth-database-pvc
