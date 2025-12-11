@@ -66,7 +66,10 @@ describe("RestaurantsController", () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         `Restaurant created with id: ${createdRestaurant.id}`,
       );
-      expect(mockResponse.json).toHaveBeenCalledWith(createdRestaurant);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        data: createdRestaurant,
+        success: true,
+      });
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -123,10 +126,13 @@ describe("RestaurantsController", () => {
         take: 10,
       });
       expect(mockResponse.json).toHaveBeenCalledWith({
-        page: 1,
-        limit: 10,
-        total: total,
+        meta: {
+          page: 1,
+          per_page: 10,
+          total: total,
+        },
         data: restaurants,
+        success: true,
       });
     });
 
@@ -134,7 +140,7 @@ describe("RestaurantsController", () => {
       const restaurants = [];
       const total = 0;
 
-      mockRequest.query = { page: "2", limit: "5" };
+      mockRequest.query = { page: "2", per_page: "5" };
       mockRestaurantsService.findAll.mockResolvedValue([restaurants, total]);
 
       await controller.findAll(
@@ -148,10 +154,13 @@ describe("RestaurantsController", () => {
         take: 5,
       });
       expect(mockResponse.json).toHaveBeenCalledWith({
-        page: 2,
-        limit: 5,
-        total: total,
+        meta: {
+          page: 2,
+          per_page: 5,
+          total: total,
+        },
         data: restaurants,
+        success: true,
       });
     });
 
@@ -199,7 +208,10 @@ describe("RestaurantsController", () => {
       expect(mockRestaurantsService.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
       });
-      expect(mockResponse.json).toHaveBeenCalledWith(restaurant);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        data: restaurant,
+        success: true,
+      });
     });
 
     it("should return 404 when restaurant not found", async () => {
@@ -246,10 +258,19 @@ describe("RestaurantsController", () => {
         address: "456 Updated St",
       };
       const updateResult = { affected: 1, generatedMaps: [], raw: {} };
+      const updatedRestaurant = {
+        id: 1,
+        name: "Updated Restaurant",
+        address: "456 Updated St",
+        created_at: new Date(),
+        updated_at: new Date(),
+        users: [],
+      };
 
       mockRequest.params = { id: "1" };
       mockRequest.body = updateData;
       mockRestaurantsService.update.mockResolvedValue(updateResult);
+      mockRestaurantsService.findOne.mockResolvedValue(updatedRestaurant);
 
       await controller.update(
         mockRequest as Request,
@@ -261,7 +282,13 @@ describe("RestaurantsController", () => {
         { id: 1 },
         updateData,
       );
-      expect(mockResponse.json).toHaveBeenCalledWith(updateResult);
+      expect(mockRestaurantsService.findOne).toHaveBeenCalledWith({
+        where: { id: 1 },
+      });
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        data: updatedRestaurant,
+        success: true,
+      });
     });
 
     it("should handle errors when updating a restaurant", async () => {
@@ -304,7 +331,10 @@ describe("RestaurantsController", () => {
       );
 
       expect(mockRestaurantsService.delete).toHaveBeenCalledWith({ id: 1 });
-      expect(mockResponse.json).toHaveBeenCalledWith(deleteResult);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        data: { affected: deleteResult.affected },
+        success: true,
+      });
     });
 
     it("should handle errors when deleting a restaurant", async () => {

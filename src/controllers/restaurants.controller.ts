@@ -36,8 +36,8 @@ class RestaurantsController {
 
   async findAll(req: Request, res: Response, next: NextFunction) {
     const query = req.query as z.infer<typeof restaurantQueryValidationSchema>;
-    const page = req.query.page ? Number(query.page) : 1;
-    const per_page = req.query.limit ? Number(query.per_page) : 10;
+    const page = query.page ? Number(query.page) : 1;
+    const per_page = query.per_page ? Number(query.per_page) : 10;
     const skip = (page - 1) * per_page;
     try {
       this.logger.info("Fetching all restaurants");
