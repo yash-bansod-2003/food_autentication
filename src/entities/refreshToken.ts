@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { User } from "./user";
+import type { User } from "./user";
 
 @Entity("refresh-tokens")
 export class RefreshToken {
@@ -18,6 +18,6 @@ export class RefreshToken {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens)
+  @ManyToOne("User", (user: User) => user.refreshTokens)
   user: User;
 }
