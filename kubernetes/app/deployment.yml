@@ -34,6 +34,16 @@ spec:
                 configMapKeyRef:
                   name: food-auth-backend-config-map
                   key: DOMAIN
+            - name: ALLOWED_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: food-auth-backend-config-map
+                  key: ALLOWED_ORIGINS
+            - name: JWKS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: food-auth-backend-config-map
+                  key: JWKS_URL
             - name: DATABASE_HOST
               valueFrom:
                 secretKeyRef:
@@ -59,11 +69,11 @@ spec:
                 secretKeyRef:
                   name: food-auth-backend-secret
                   key: DATABASE_PASSWORD
-            - name: JWT_ACCESS_TOKEN_SECRET
+            - name: JWT_PRIVATE_KEY_SECRETS
               valueFrom:
                 secretKeyRef:
                   name: food-auth-backend-secret
-                  key: JWT_ACCESS_TOKEN_SECRET
+                  key: JWT_PRIVATE_KEY_SECRETS
             - name: JWT_REFRESH_TOKEN_SECRET
               valueFrom:
                 secretKeyRef:

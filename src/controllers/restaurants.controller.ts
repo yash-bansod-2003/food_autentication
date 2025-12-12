@@ -72,7 +72,7 @@ class RestaurantsController {
       });
       if (!restaurant) {
         this.logger.info(`Restaurant with id: ${req.params.id} not found`);
-        return res.status(404).json({ message: "Restaurant not found" });
+        throw createHttpError(404, "Restaurant not found");
       }
       const response: ResponseWithMetadata<Restaurant> = {
         data: restaurant,
