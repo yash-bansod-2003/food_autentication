@@ -224,10 +224,12 @@ describe("RestaurantsController", () => {
         mockNext,
       );
 
-      expect(mockResponse.status).toHaveBeenCalledWith(404);
-      expect(mockResponse.json).toHaveBeenCalledWith({
-        message: "Restaurant not found",
-      });
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Restaurant with id: 999 not found",
+      );
+      expect(mockNext).toHaveBeenCalledWith(
+        createHttpError(404, "Restaurant not found"),
+      );
     });
 
     it("should handle errors when fetching a restaurant", async () => {

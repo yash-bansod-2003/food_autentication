@@ -48,6 +48,8 @@ const configuration = {
   },
 };
 
-configurationSchema.parse(configuration);
+if (configuration.node_env === "production") {
+  configurationSchema.parse(configuration);
+}
 
 export default configuration;
