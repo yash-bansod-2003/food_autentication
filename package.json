@@ -10,7 +10,7 @@
       "lint": "npx eslint ./src",
       "format": "npx prettier ./src --write",
       "prepare": "husky",
-      "test": "jest -experimental-vm-modules",
+      "test": "cross-env NODE_ENV=test jest -experimental-vm-modules",
       "typeorm": "typeorm-ts-node-commonjs",
       "migration:generate": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:generate",
       "migration:dev": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:run -d dist/src/data-source.js",
