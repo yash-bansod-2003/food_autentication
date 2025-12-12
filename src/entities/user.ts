@@ -8,8 +8,8 @@ import {
   CreateDateColumn,
 } from "typeorm";
 import { Restaurant } from "@/entities/restaurant";
-import { RefreshToken } from "@/entities/refreshToken";
 import { ROLES } from "@/lib/constants";
+import type { RefreshToken } from "@/entities/refreshToken";
 
 @Entity("users")
 export class User {
@@ -44,6 +44,6 @@ export class User {
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.users)
   restaurant: Restaurant;
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  @OneToMany("RefreshToken", (refreshToken: RefreshToken) => refreshToken.user)
   refreshTokens: RefreshToken[];
 }
