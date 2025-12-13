@@ -107,14 +107,14 @@ class AutenticationController {
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60,
         secure: false,
       });
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60 * 24 * 365,
         secure: false,
       });
@@ -332,14 +332,14 @@ class AutenticationController {
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60,
         secure: false,
       });
 
       res.cookie("refreshToken", refreshTokenNew, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60 * 24 * 365,
         secure: false,
       });

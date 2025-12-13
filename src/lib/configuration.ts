@@ -30,6 +30,7 @@ const configuration = {
   node_env: process.env.NODE_ENV,
   host: process.env.HOST ?? "localhost",
   port: Number.parseInt(process.env.PORT ?? "80"),
+  allowed_origins: process.env.ALLOWED_ORIGINS?.split(",") || [],
   database: {
     host: process.env.DATABASE_HOST,
     port: Number.parseInt(process.env.DATABASE_PORT ?? "5432"),
