@@ -4,20 +4,26 @@ import createHttpError from "http-errors";
 import UserService from "@/services/users.service";
 import RestaurantsService from "@/services/restaurants.service";
 import { User, ResponseWithMetadata } from "@/types/index";
-import { userQueryValidationSchema } from "@/validators/users.validators";
+import {
+  userQueryValidationSchema,
+  userValidationSchema,
+} from "@/validators/users.validators";
 import { z } from "zod";
+import { ROLES } from "@/lib/constants";
+import HashingService from "@/services/hashing.service";
 
 class UsersController {
   constructor(
     private readonly userService: UserService,
     private readonly restaurantsService: RestaurantsService,
+    private readonly hashingService: HashingService,
     private readonly logger: Logger,
   ) {}
 
   async create(req: Request, res: Response, next: NextFunction) {
-    const body = req.body as User;
+    const body = req.body as z.infer<typeof userValidationSchema>;
     this.logger.info(`Creating user with email: ${body.email}`);
-    const { restaurantId, ...rest } = body;
+    const { restaurantId, password, ...rest } = body;
 
     const restaurant = await this.restaurantsService.findOne({
       where: { id: restaurantId },
@@ -30,8 +36,13 @@ class UsersController {
     }
 
     try {
+      this.logger.debug("creating hash of the password");
+      const passwordHash = await this.hashingService.hash(password);
+
       const user = await this.userService.create({
         ...rest,
+        role: ROLES.USER,
+        password: passwordHash,
         restaurant,
       });
       this.logger.info(`User created with id: ${user.id}`);
@@ -79,17 +90,10 @@ class UsersController {
       this.logger.debug(`User query params: ${JSON.stringify(query, null, 2)}`);
 
       const [users, total] = await queryBuilder
+        .leftJoinAndSelect("user.restaurant", "restaurant")
         .skip(skip)
         .take(limit)
-        .select([
-          "user.id",
-          "user.firstname",
-          "user.lastname",
-          "user.email",
-          "user.role",
-          "user.created_at",
-          "user.updated_at",
-        ])
+        .orderBy("user.id", "DESC")
         .getManyAndCount();
 
       const response: ResponseWithMetadata<User[]> = {
@@ -98,7 +102,7 @@ class UsersController {
           per_page: limit,
           total,
         },
-        data: users,
+        data: users.map((user) => ({ ...user, password: undefined })),
         success: true,
       };
 
