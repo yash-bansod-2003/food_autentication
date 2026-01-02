@@ -59,9 +59,9 @@ class AutenticationController {
         where: { email },
         relations: { restaurant: true },
       });
-
-      this.logger.debug(`User not found for email: ${email}`);
+      // user existence will be checked below; avoid logging a negative statement preemptively
       if (!user) {
+        this.logger.debug(`User not found for email: ${email}`);
         throw createError(404, "user not found");
       }
       this.logger.debug(`Matching password for email: ${email}`);
@@ -107,14 +107,14 @@ class AutenticationController {
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60,
         secure: false,
       });
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60 * 24 * 365,
         secure: false,
       });
@@ -139,9 +139,8 @@ class AutenticationController {
       const user = await this.userService.findOne({
         where: { id: Number(id) },
       });
-      this.logger.debug(`User not found for id: ${id}`);
       if (!user) {
-        this.logger.debug(`Profile fetched for user id: ${id}`);
+        this.logger.debug(`User not found for id: ${id}`);
         throw createError(404, "user not found");
       }
       user.password = undefined;
@@ -166,8 +165,8 @@ class AutenticationController {
 
       this.logger.debug(`Initiating forgot password for email: ${email}`);
       const user = await this.userService.findOne({ where: { email } });
-      this.logger.debug(`User not found for email: ${email}`);
       if (!user) {
+        this.logger.debug(`User not found for email: ${email}`);
         throw createError(404, "user not found");
       }
       const payload: JsonWebToken.JwtPayload = {
@@ -199,8 +198,8 @@ class AutenticationController {
         throw createError(400, "token is required");
       }
       const match = this.forgotTokensService.verify(token);
-      this.logger.debug(`Invalid token for password reset`);
       if (!match) {
+        this.logger.debug(`Invalid token for password reset`);
         throw createError(500, "internal server error");
       }
       const { email } = match as JsonWebToken.JwtPayload;
@@ -210,8 +209,8 @@ class AutenticationController {
         where: { email: email as string },
       });
 
-      this.logger.debug(`User not found for email: ${email}`);
       if (!userExists) {
+        this.logger.debug(`User not found for email: ${email}`);
         throw createError(404, "user not found");
       }
 
@@ -227,9 +226,8 @@ class AutenticationController {
           password,
         },
       );
-
-      this.logger.debug(`Failed to update password for email: ${email}`);
       if (!user) {
+        this.logger.debug(`Failed to update password for email: ${email}`);
         throw createError(500, "internal server error");
       }
       this.logger.debug(`Password reset successful for email: ${email}`);
@@ -332,14 +330,14 @@ class AutenticationController {
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60,
         secure: false,
       });
 
       res.cookie("refreshToken", refreshTokenNew, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60 * 24 * 365,
         secure: false,
       });

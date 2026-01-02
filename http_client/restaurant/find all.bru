@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: http://localhost:5001/restaurants
+  url: http://localhost:5001/restaurants?search=Yash
   body: json
   auth: none
+}
+
+params:query {
+  search: Yash
 }
 
 body:json {

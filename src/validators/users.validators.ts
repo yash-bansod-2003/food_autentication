@@ -15,10 +15,9 @@ export const userQueryValidationSchema = z
   .object({
     restaurantId: z.string().optional(),
     page: z.number().optional(),
-    limit: z.number().optional(),
-    firstname: z.string(),
-    lastname: z.string(),
-    email: z.string(),
+    per_page: z.number().optional(),
+    search: z.string().optional(),
+    role: z.string().trim(),
   })
   .strict();
 
@@ -28,8 +27,8 @@ export const userCreateValidator = (
   next: NextFunction,
 ) => {
   try {
-    console.log(req.body);
     userValidationSchema.parse(req.body);
+    userQueryValidationSchema.parse(req.query);
     next();
     return;
   } catch (error) {

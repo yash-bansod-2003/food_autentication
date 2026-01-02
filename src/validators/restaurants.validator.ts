@@ -8,6 +8,7 @@ export const restaurantValidationSchema = z.object({
 export const restaurantQueryValidationSchema = z.object({
   page: z.number().optional(),
   per_page: z.number().optional(),
+  search: z.string().optional(),
 });
 
 export const restaurantCreateValidator = (

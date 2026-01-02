@@ -4,6 +4,8 @@ import createHttpError from "http-errors";
 import UserService from "@/services/users.service";
 import RestaurantsService from "@/services/restaurants.service";
 import { User, ResponseWithMetadata } from "@/types/index";
+import { userQueryValidationSchema } from "@/validators/users.validators";
+import { z } from "zod";
 
 class UsersController {
   constructor(
@@ -13,8 +15,9 @@ class UsersController {
   ) {}
 
   async create(req: Request, res: Response, next: NextFunction) {
-    this.logger.info(`Creating user with data: ${JSON.stringify(req.body)}`);
-    const { restaurantId, ...rest } = req.body as User;
+    const body = req.body as User;
+    this.logger.info(`Creating user with email: ${body.email}`);
+    const { restaurantId, ...rest } = body;
 
     const restaurant = await this.restaurantsService.findOne({
       where: { id: restaurantId },
@@ -46,18 +49,48 @@ class UsersController {
   }
 
   async findAll(req: Request, res: Response, next: NextFunction) {
-    const page = req.query.page ? Number(req.query.page) : 1;
-    const limit = req.query.limit ? Number(req.query.limit) : 10;
+    const query = req.query as unknown as z.infer<
+      typeof userQueryValidationSchema
+    >;
+
+    const page = query.page ? Number(query.page) : 1;
+    const limit = query.per_page ? Number(query.per_page) : 10;
     const skip = (page - 1) * limit;
 
     try {
-      const [users, total] = await this.userService.findAll({
-        skip,
-        take: limit,
-        select: {
-          password: false,
-        },
-      });
+      const queryBuilder = this.userService.getQueryBuilder("user");
+
+      /*
+      Okay if you wonder the CONCAT will be help to search for users by their full name like 'Yash Bansod' will return users with firstname 'Yash' and lastname 'Bansod' or vice versa 
+      */
+      if (query.search) {
+        queryBuilder.where(
+          "(LOWER(user.firstname) LIKE LOWER(:search) OR LOWER(user.lastname) LIKE LOWER(:search) OR LOWER(user.email) LIKE LOWER(:search) OR LOWER(CONCAT(user.firstname, ' ', user.lastname)) LIKE LOWER(:search))",
+          {
+            search: `%${query.search}%`,
+          },
+        );
+      }
+
+      if (query.role) {
+        queryBuilder.andWhere("user.role = :role", { role: query.role });
+      }
+
+      this.logger.debug(`User query params: ${JSON.stringify(query, null, 2)}`);
+
+      const [users, total] = await queryBuilder
+        .skip(skip)
+        .take(limit)
+        .select([
+          "user.id",
+          "user.firstname",
+          "user.lastname",
+          "user.email",
+          "user.role",
+          "user.created_at",
+          "user.updated_at",
+        ])
+        .getManyAndCount();
 
       const response: ResponseWithMetadata<User[]> = {
         meta: {

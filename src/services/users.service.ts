@@ -6,6 +6,7 @@ import {
   FindOptionsWhere,
   Repository,
   SaveOptions,
+  SelectQueryBuilder,
   UpdateResult,
 } from "typeorm";
 import { User } from "@/entities/user";
@@ -66,6 +67,15 @@ class UsersService {
    */
   async delete(criteria: FindOptionsWhere<User>): Promise<DeleteResult> {
     return await this.usersRepository.delete(criteria);
+  }
+
+  /**
+   *
+   * @returns A QueryBuilder for the User entity, allowing for complex queries to be built.
+   * This can be used to perform operations like joins, where conditions, and more.
+   */
+  getQueryBuilder(alias: string): SelectQueryBuilder<User> {
+    return this.usersRepository.createQueryBuilder(alias);
   }
 }
 

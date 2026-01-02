@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: http://localhost:5001/users?firstname=Yash&lastname=Bansod
+  url: http://localhost:5001/users?search=Tony&role=manager
   body: json
   auth: none
 }
 
 params:query {
-  firstname: Yash
-  lastname: Bansod
+  search: Tony
+  role: manager
 }
 
 body:json {

@@ -7,6 +7,7 @@ import {
   FindOptionsWhere,
   Repository,
   SaveOptions,
+  SelectQueryBuilder,
   UpdateResult,
 } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
@@ -39,6 +40,15 @@ class RestaurantsService {
 
   delete(criteria: FindOptionsWhere<Restaurant>): Promise<DeleteResult> {
     return this.restaurantsRepository.delete(criteria);
+  }
+
+  /**
+   *
+   * @returns A QueryBuilder for the User entity, allowing for complex queries to be built.
+   * This can be used to perform operations like joins, where conditions, and more.
+   */
+  getQueryBuilder(alias: string): SelectQueryBuilder<Restaurant> {
+    return this.restaurantsRepository.createQueryBuilder(alias);
   }
 }
 
