@@ -16,7 +16,9 @@ class RestaurantsController {
   async create(req: Request, res: Response, next: NextFunction) {
     const restaurantData = req.body as Restaurant;
     try {
-      this.logger.info(
+      // keep high-level info, push payload details to debug to avoid noisy logs in production
+      this.logger.info(`Creating restaurant`);
+      this.logger.debug(
         `Creating restaurant with data: ${JSON.stringify(restaurantData)}`,
       );
       const restaurant = await this.restaurantsService.create(restaurantData);
@@ -35,16 +37,28 @@ class RestaurantsController {
   }
 
   async findAll(req: Request, res: Response, next: NextFunction) {
-    const query = req.query as z.infer<typeof restaurantQueryValidationSchema>;
+    const query = req.query as unknown as z.infer<
+      typeof restaurantQueryValidationSchema
+    >;
     const page = query.page ? Number(query.page) : 1;
     const per_page = query.per_page ? Number(query.per_page) : 10;
     const skip = (page - 1) * per_page;
     try {
       this.logger.info("Fetching all restaurants");
-      const [restaurants, total] = await this.restaurantsService.findAll({
-        skip,
-        take: per_page,
-      });
+      const queryBuilder =
+        this.restaurantsService.getQueryBuilder("restaurant");
+
+      if (query.search) {
+        queryBuilder.where("LOWER(restaurant.name) LIKE LOWER(:search)", {
+          search: `%${query.search}%`,
+        });
+      }
+
+      const [restaurants, total] = await queryBuilder
+        .skip(skip)
+        .take(per_page)
+        .getManyAndCount();
+
       this.logger.info(`Fetched ${restaurants.length} restaurants`);
       const response: ResponseWithMetadata<Restaurant[]> = {
         meta: {
@@ -91,10 +105,9 @@ class RestaurantsController {
   async update(req: Request, res: Response, next: NextFunction) {
     const restaurantData = req.body as Restaurant;
     try {
-      this.logger.info(
-        `Updating restaurant with id: ${req.params.id} with data: ${JSON.stringify(
-          restaurantData,
-        )}`,
+      this.logger.info(`Updating restaurant with id: ${req.params.id}`);
+      this.logger.debug(
+        `Updating restaurant with data: ${JSON.stringify(restaurantData)}`,
       );
       await this.restaurantsService.update(
         { id: Number(req.params.id) },
