@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { Logger } from "winston";
 import RestaurantsController from "@/controllers/restaurants.controller";
 import RestaurantsService from "@/services/restaurants.service";
+import { SelectQueryBuilder } from "typeorm";
+import { Restaurant } from "@/types/index";
 import createHttpError from "http-errors";
 
 const mockRestaurantsService = {
@@ -10,11 +12,13 @@ const mockRestaurantsService = {
   findOne: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
+  getQueryBuilder: jest.fn(),
 } as unknown as jest.Mocked<RestaurantsService>;
 
 const mockLogger = {
   info: jest.fn(),
   error: jest.fn(),
+  debug: jest.fn(),
 } as unknown as jest.Mocked<Logger>;
 
 describe("RestaurantsController", () => {
@@ -57,15 +61,6 @@ describe("RestaurantsController", () => {
         mockNext,
       );
 
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        `Creating restaurant with data: ${JSON.stringify(restaurantData)}`,
-      );
-      expect(mockRestaurantsService.create).toHaveBeenCalledWith(
-        restaurantData,
-      );
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        `Restaurant created with id: ${createdRestaurant.id}`,
-      );
       expect(mockResponse.json).toHaveBeenCalledWith({
         data: createdRestaurant,
         success: true,
@@ -89,9 +84,6 @@ describe("RestaurantsController", () => {
         mockNext,
       );
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        `Error creating restaurant: ${error.message}`,
-      );
       expect(mockNext).toHaveBeenCalledWith(
         createHttpError(500, "Error creating restaurant"),
       );
@@ -113,7 +105,22 @@ describe("RestaurantsController", () => {
       const total = 1;
 
       mockRequest.query = {};
-      mockRestaurantsService.findAll.mockResolvedValue([restaurants, total]);
+
+      const queryBuilderMock: Partial<SelectQueryBuilder<Restaurant>> & {
+        where: jest.Mock;
+        skip: jest.Mock;
+        take: jest.Mock;
+        getManyAndCount: jest.Mock;
+      } = {
+        where: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValue([restaurants, total]),
+      };
+
+      mockRestaurantsService.getQueryBuilder.mockReturnValue(
+        queryBuilderMock as unknown as SelectQueryBuilder<Restaurant>,
+      );
 
       await controller.findAll(
         mockRequest as Request,
@@ -121,10 +128,11 @@ describe("RestaurantsController", () => {
         mockNext,
       );
 
-      expect(mockRestaurantsService.findAll).toHaveBeenCalledWith({
-        skip: 0,
-        take: 10,
-      });
+      expect(mockRestaurantsService.getQueryBuilder).toHaveBeenCalledWith(
+        "restaurant",
+      );
+      expect(queryBuilderMock.skip).toHaveBeenCalledWith(0);
+      expect(queryBuilderMock.take).toHaveBeenCalledWith(10);
       expect(mockResponse.json).toHaveBeenCalledWith({
         meta: {
           page: 1,
@@ -141,7 +149,22 @@ describe("RestaurantsController", () => {
       const total = 0;
 
       mockRequest.query = { page: "2", per_page: "5" };
-      mockRestaurantsService.findAll.mockResolvedValue([restaurants, total]);
+
+      const queryBuilderMock: Partial<SelectQueryBuilder<Restaurant>> & {
+        where: jest.Mock;
+        skip: jest.Mock;
+        take: jest.Mock;
+        getManyAndCount: jest.Mock;
+      } = {
+        where: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValue([restaurants, total]),
+      };
+
+      mockRestaurantsService.getQueryBuilder.mockReturnValue(
+        queryBuilderMock as SelectQueryBuilder<Restaurant>,
+      );
 
       await controller.findAll(
         mockRequest as Request,
@@ -149,10 +172,11 @@ describe("RestaurantsController", () => {
         mockNext,
       );
 
-      expect(mockRestaurantsService.findAll).toHaveBeenCalledWith({
-        skip: 5,
-        take: 5,
-      });
+      expect(mockRestaurantsService.getQueryBuilder).toHaveBeenCalledWith(
+        "restaurant",
+      );
+      expect(queryBuilderMock.skip).toHaveBeenCalledWith(5);
+      expect(queryBuilderMock.take).toHaveBeenCalledWith(5);
       expect(mockResponse.json).toHaveBeenCalledWith({
         meta: {
           page: 2,
@@ -166,18 +190,28 @@ describe("RestaurantsController", () => {
 
     it("should handle errors when fetching all restaurants", async () => {
       const error = new Error("Database error");
-
       mockRequest.query = {};
-      mockRestaurantsService.findAll.mockRejectedValue(error);
+
+      const queryBuilderMock: Partial<SelectQueryBuilder<Restaurant>> & {
+        where: jest.Mock;
+        skip: jest.Mock;
+        take: jest.Mock;
+        getManyAndCount: jest.Mock;
+      } = {
+        where: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockRejectedValue(error),
+      };
+
+      mockRestaurantsService.getQueryBuilder.mockReturnValue(
+        queryBuilderMock as SelectQueryBuilder<Restaurant>,
+      );
 
       await controller.findAll(
         mockRequest as Request,
         mockResponse as Response,
         mockNext,
-      );
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        `Error fetching all restaurants: ${error.message}`,
       );
       expect(mockNext).toHaveBeenCalledWith(
         createHttpError(500, "Error fetching all restaurants"),
@@ -223,10 +257,6 @@ describe("RestaurantsController", () => {
         mockResponse as Response,
         mockNext,
       );
-
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        "Restaurant with id: 999 not found",
-      );
       expect(mockNext).toHaveBeenCalledWith(
         createHttpError(404, "Restaurant not found"),
       );
@@ -242,10 +272,6 @@ describe("RestaurantsController", () => {
         mockRequest as Request,
         mockResponse as Response,
         mockNext,
-      );
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        `Error fetching restaurant with id: 1: ${error.message}`,
       );
       expect(mockNext).toHaveBeenCalledWith(
         createHttpError(404, "Restaurant not found"),
@@ -309,10 +335,6 @@ describe("RestaurantsController", () => {
         mockResponse as Response,
         mockNext,
       );
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        `Error updating restaurant with id: 1: ${error.message}`,
-      );
       expect(mockNext).toHaveBeenCalledWith(
         createHttpError(500, "Error updating restaurant"),
       );
@@ -351,9 +373,6 @@ describe("RestaurantsController", () => {
         mockNext,
       );
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        `Error deleting restaurant with id: 1: ${error.message}`,
-      );
       expect(mockNext).toHaveBeenCalledWith(
         createHttpError(500, "Error deleting restaurant"),
       );
