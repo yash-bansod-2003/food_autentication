@@ -7,6 +7,8 @@ import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
 import createError from "http-errors";
 import HashingService from "@/services/hashing.service";
+import { MessageBrokerEvent, MessageBroker } from "@/types";
+import { v4 as uuidV4 } from "uuid";
 
 class AutenticationController {
   constructor(
@@ -15,6 +17,7 @@ class AutenticationController {
     private readonly accessTokensService: TokensService,
     private readonly refreshTokensService: TokensService,
     private readonly forgotTokensService: TokensService,
+    private readonly messageBroker: MessageBroker,
     private readonly logger: Logger,
   ) {}
 
@@ -39,6 +42,26 @@ class AutenticationController {
       });
       this.logger.debug("user registered successfully");
       user.password = undefined;
+      const messageBrokerEvent: MessageBrokerEvent = {
+        event_id: uuidV4(),
+        event_type: "user.created",
+        event_version: "1.0",
+        occurred_at: new Date().toISOString(),
+        producer: {
+          service: "food_authentication",
+          version: "1.0.0",
+        },
+        partition_key: String(user.id),
+        data: user,
+      };
+      this.logger.debug("sending user.created event to message broker");
+      await this.messageBroker.sendMessage(
+        "user.created",
+        JSON.stringify(messageBrokerEvent),
+      );
+      this.logger.debug(
+        "user.created event sent to message broker successfully",
+      );
       const response: ResponseWithMetadata<typeof user> = {
         data: user,
         success: true,

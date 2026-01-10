@@ -13,7 +13,7 @@ const configurationSchema = z.object({
     password: z.string(),
     database: z.string(),
   }),
-  jwks_uri: z.string().url(),
+  jwks_uri: z.url(),
   jwt_secrets: z.object({
     privateKay: z.string(),
     refresh: z.string(),
@@ -22,6 +22,10 @@ const configurationSchema = z.object({
   cookies: z.object({
     domain: z.string().optional(),
   }),
+  kafka: {
+    clientId: z.string().default("auth-service"),
+    brokers: z.array(z.string()).default(["localhost:9092"]),
+  },
 });
 
 export type Configuration = z.infer<typeof configurationSchema>;
@@ -46,6 +50,12 @@ const configuration = {
   },
   cookies: {
     domain: process.env.COOKIE_DOMAIN,
+  },
+  kafka: {
+    clientId: process.env.KAFKA_CLIENT_ID || "catalog-service",
+    brokers: process.env.KAFKA_BROKERS
+      ? process.env.KAFKA_BROKERS.split(",")
+      : ["localhost:9092"],
   },
 };
 
