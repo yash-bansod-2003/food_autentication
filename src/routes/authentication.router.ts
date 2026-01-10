@@ -11,6 +11,7 @@ import HashingService from "@/services/hashing.service";
 import authenticationMiddleware from "@/middlewares/authenticate";
 import authenticationRefreshTokenMiddleware from "@/middlewares/authenticate-refreshToken";
 import { userCreateValidator } from "@/validators/users.validators";
+import { createMessageBrokerFactory } from "@/lib/factories/brokerFactory";
 
 const router = Router();
 
@@ -31,6 +32,7 @@ const refreshTokensService = new TokensService(
 const forgotTokensService = new TokensService(
   String(configuration.jwt_secrets.forgot),
 );
+const messageBroker = createMessageBrokerFactory();
 const usersService = new UsersService(usersRepository);
 const authenticationController = new AutenticationController(
   usersService,
@@ -38,6 +40,7 @@ const authenticationController = new AutenticationController(
   accessTokensService,
   refreshTokensService,
   forgotTokensService,
+  messageBroker,
   logger,
 );
 
