@@ -56,7 +56,7 @@ class AutenticationController {
       };
       this.logger.debug("sending user.created event to message broker");
       await this.messageBroker.sendMessage(
-        "user.created",
+        "customer-topic",
         JSON.stringify(messageBrokerEvent),
       );
       this.logger.debug(
@@ -82,7 +82,6 @@ class AutenticationController {
         where: { email },
         relations: { restaurant: true },
       });
-      // user existence will be checked below; avoid logging a negative statement preemptively
       if (!user) {
         this.logger.debug(`User not found for email: ${email}`);
         throw createError(404, "user not found");
