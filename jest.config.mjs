@@ -2,7 +2,7 @@ const config = {
   displayName: "Food Autentication",
   roots: ["<rootDir>"],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@/(.*)$": "<rootDir>/src/$1"
   },
   transform: {
     "^.+\\.(t|j)sx?$": ["@swc/jest"],

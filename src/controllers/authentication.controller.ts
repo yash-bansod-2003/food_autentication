@@ -8,7 +8,7 @@ import { Logger } from "winston";
 import createError from "http-errors";
 import HashingService from "@/services/hashing.service";
 import { MessageBrokerEvent, MessageBroker } from "@/types";
-import { v4 as uuidV4 } from "uuid";
+import { getRandomValues } from "node:crypto";
 
 class AutenticationController {
   constructor(
@@ -43,7 +43,7 @@ class AutenticationController {
       this.logger.debug("user registered successfully");
       user.password = undefined;
       const messageBrokerEvent: MessageBrokerEvent = {
-        event_id: uuidV4(),
+        event_id: getRandomValues(new Uint8Array(16)).toString(),
         event_type: "user.created",
         event_version: "1.0",
         occurred_at: new Date().toISOString(),
@@ -219,7 +219,7 @@ class AutenticationController {
       if (!token) {
         throw createError(400, "token is required");
       }
-      const match = this.forgotTokensService.verify(token);
+      const match = this.forgotTokensService.verify(token as string);
       if (!match) {
         this.logger.debug(`Invalid token for password reset`);
         throw createError(500, "internal server error");

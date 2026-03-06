@@ -1,6 +1,6 @@
-import configuration from "@/lib/configuration.js";
-import { KafkaBroker } from "@/lib/kafka.js";
-import { MessageBroker } from "@/types/index.js";
+import configuration from "@/lib/configuration";
+import { KafkaBroker } from "@/lib/kafka";
+import { MessageBroker } from "@/types/index";
 
 let messageBroker: MessageBroker | null = null;
 
