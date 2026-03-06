@@ -26,7 +26,11 @@ export const createServer = (): Express => {
     .use(express.urlencoded({ extended: true }))
     .use(morgan("dev"))
     .use(cookieParser())
-    .use(express.static(path.join(__dirname, "..", "public")))
+    .use(
+      express.static(path.join(__dirname, "..", "public"), {
+        dotfiles: "allow",
+      }),
+    )
     .get("/status", (_, res) => {
       res.json({ ok: true });
     })

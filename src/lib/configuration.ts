@@ -56,6 +56,13 @@ const configuration = {
     brokers: process.env.KAFKA_BROKERS
       ? process.env.KAFKA_BROKERS.split(",")
       : ["localhost:9092"],
+    ssl: process.env.KAFKA_SSL_CA
+      ? {
+          ca: process.env.KAFKA_SSL_CA,
+          cert: process.env.KAFKA_SSL_CERT,
+          key: process.env.KAFKA_SSL_KEY,
+        }
+      : undefined,
   },
 };
 

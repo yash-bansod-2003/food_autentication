@@ -9,6 +9,7 @@ export const createMessageBrokerFactory = (): MessageBroker => {
     messageBroker = new KafkaBroker({
       clientId: configuration.kafka.clientId,
       brokers: configuration.kafka.brokers,
+      ssl: configuration.kafka.ssl,
     });
   }
   return messageBroker;
