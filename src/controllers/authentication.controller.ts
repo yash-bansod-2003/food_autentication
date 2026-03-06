@@ -9,6 +9,7 @@ import createError from "http-errors";
 import HashingService from "@/services/hashing.service";
 import { MessageBrokerEvent, MessageBroker } from "@/types";
 import { getRandomValues } from "node:crypto";
+import { MESSAGE_BROKER_TOPIC_EVENTS } from "@/lib/constants";
 
 class AutenticationController {
   constructor(
@@ -44,7 +45,7 @@ class AutenticationController {
       user.password = undefined;
       const messageBrokerEvent: MessageBrokerEvent = {
         event_id: getRandomValues(new Uint8Array(16)).toString(),
-        event_type: "user.created",
+        event_type: MESSAGE_BROKER_TOPIC_EVENTS.USER_CREATED,
         event_version: "1.0",
         occurred_at: new Date().toISOString(),
         producer: {
@@ -56,7 +57,7 @@ class AutenticationController {
       };
       this.logger.debug("sending user.created event to message broker");
       await this.messageBroker.sendMessage(
-        "customer-topic",
+        "user.events",
         JSON.stringify(messageBrokerEvent),
       );
       this.logger.debug(
