@@ -17,7 +17,7 @@ export const userQueryValidationSchema = z
     page: z.number().optional(),
     per_page: z.number().optional(),
     search: z.string().optional(),
-    role: z.string().trim(),
+    role: z.string().optional(),
   })
   .strict();
 

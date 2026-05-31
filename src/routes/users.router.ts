@@ -10,6 +10,7 @@ import authorization from "@/middlewares/authorization";
 import logger from "@/lib/logger";
 import { ROLES } from "@/lib/constants";
 import { userCreateValidator } from "@/validators/users.validators";
+import HashingService from "@/services/hashing.service";
 
 const router = Router();
 
@@ -17,9 +18,12 @@ const usersRepository = AppDataSource.getRepository(User);
 const restaurantsRepository = AppDataSource.getRepository(Restaurant);
 const usersService = new UsersService(usersRepository);
 const restaurantsService = new RestaurantsService(restaurantsRepository);
+
+const hashingService = new HashingService();
 const usersController = new UsersController(
   usersService,
   restaurantsService,
+  hashingService,
   logger,
 );
 

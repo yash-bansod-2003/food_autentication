@@ -14,3 +14,26 @@ export interface ResponseWithMetadata<T> {
   data: T;
   success?: boolean;
 }
+
+export interface MessageBroker {
+  connect(): Promise<void>;
+  disconnect(): Promise<void>;
+  sendMessage(topic: string, message: string): Promise<void>;
+}
+
+type EVENT_TYPE = "user.created" | "user.updated";
+
+export interface ProducerMeta {
+  service: string;
+  version: string;
+}
+
+export interface MessageBrokerEvent<T = unknown> {
+  event_id: string;
+  event_type: EVENT_TYPE;
+  event_version: string;
+  occurred_at: string;
+  producer: ProducerMeta;
+  partition_key: string;
+  data: T;
+}

@@ -7,6 +7,9 @@ import { AuthenticatedRequest } from "@/middlewares/authenticate";
 import { Logger } from "winston";
 import createError from "http-errors";
 import HashingService from "@/services/hashing.service";
+import { MessageBrokerEvent, MessageBroker } from "@/types";
+import { getRandomValues } from "node:crypto";
+import { MESSAGE_BROKER_TOPIC_EVENTS } from "@/lib/constants";
 
 class AutenticationController {
   constructor(
@@ -15,6 +18,7 @@ class AutenticationController {
     private readonly accessTokensService: TokensService,
     private readonly refreshTokensService: TokensService,
     private readonly forgotTokensService: TokensService,
+    private readonly messageBroker: MessageBroker,
     private readonly logger: Logger,
   ) {}
 
@@ -39,6 +43,26 @@ class AutenticationController {
       });
       this.logger.debug("user registered successfully");
       user.password = undefined;
+      const messageBrokerEvent: MessageBrokerEvent = {
+        event_id: getRandomValues(new Uint8Array(16)).toString(),
+        event_type: MESSAGE_BROKER_TOPIC_EVENTS.USER_CREATED,
+        event_version: "1.0",
+        occurred_at: new Date().toISOString(),
+        producer: {
+          service: "food_authentication",
+          version: "1.0.0",
+        },
+        partition_key: String(user.id),
+        data: user,
+      };
+      this.logger.debug("sending user.created event to message broker");
+      await this.messageBroker.sendMessage(
+        "user.events",
+        JSON.stringify(messageBrokerEvent),
+      );
+      this.logger.debug(
+        "user.created event sent to message broker successfully",
+      );
       const response: ResponseWithMetadata<typeof user> = {
         data: user,
         success: true,
@@ -59,7 +83,6 @@ class AutenticationController {
         where: { email },
         relations: { restaurant: true },
       });
-      // user existence will be checked below; avoid logging a negative statement preemptively
       if (!user) {
         this.logger.debug(`User not found for email: ${email}`);
         throw createError(404, "user not found");
@@ -197,7 +220,7 @@ class AutenticationController {
       if (!token) {
         throw createError(400, "token is required");
       }
-      const match = this.forgotTokensService.verify(token);
+      const match = this.forgotTokensService.verify(token as string);
       if (!match) {
         this.logger.debug(`Invalid token for password reset`);
         throw createError(500, "internal server error");
