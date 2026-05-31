@@ -164,7 +164,7 @@ class UsersController {
         },
         {
           ...rest,
-          restaurant: restaurant as never,
+          restaurant: restaurant,
         },
       );
       this.logger.info(`User with id: ${req.params.id} updated`);
