@@ -1,5 +1,5 @@
 # Use the official Node.js 23 Alpine image as the builder
-FROM node:25-alpine AS builder
+FROM node:24-alpine AS builder
 
 # Set the working directory inside the container
 WORKDIR /build
